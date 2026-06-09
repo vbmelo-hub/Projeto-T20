@@ -16,8 +16,6 @@ import {
   View,
 } from 'react-native';
 
-const heroImg = require('./assets/hero.png');
-
 const storageKey = 'grimorio20_snack_state_v1';
 
 const seedSpells = [
@@ -338,7 +336,7 @@ export default function App() {
   function renderAuth() {
     return (
       <View style={styles.authCard}>
-        <Image source={heroImg} style={styles.logo} resizeMode="contain" />
+        <Logo />
         <Text style={styles.title}>{authMode === 'login' ? 'Entrar' : 'Cadastro'}</Text>
         <Field label="Email" value={authForm.email} onChangeText={(email) => setAuthForm({ ...authForm, email })} />
         <Field
@@ -370,7 +368,7 @@ export default function App() {
   function renderWelcome() {
     return (
       <View style={styles.card}>
-        <Image source={heroImg} style={styles.logo} resizeMode="contain" />
+        <Logo />
         <Text style={styles.title}>Ola, {user.username}</Text>
         <Text style={styles.bodyText}>
           Consulte magias, crie personagens e organize quais magias cada personagem conhece ou preparou.
@@ -644,6 +642,15 @@ function Field({ label, value, onChangeText, secureTextEntry, multiline }) {
   );
 }
 
+function Logo() {
+  return (
+    <View style={styles.logo}>
+      <Text style={styles.logoMark}>G20</Text>
+      <Text style={styles.logoText}>Grimorio 20</Text>
+    </View>
+  );
+}
+
 function SectionHeader({ title, detail }) {
   return (
     <View style={styles.sectionHeader}>
@@ -813,6 +820,24 @@ const styles = StyleSheet.create({
     height: 128,
     alignSelf: 'center',
     marginBottom: 12,
+    borderRadius: 64,
+    borderWidth: 2,
+    borderColor: '#e5b8ba',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff7f7',
+  },
+  logoMark: {
+    color: colors.brand,
+    fontSize: 34,
+    lineHeight: 38,
+    fontWeight: '900',
+  },
+  logoText: {
+    color: colors.brandDark,
+    fontSize: 12,
+    fontWeight: '900',
+    marginTop: 4,
   },
   title: {
     color: colors.text,
