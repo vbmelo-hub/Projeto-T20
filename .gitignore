@@ -3,3 +3,4 @@ node_modules/
 .expo-export-test/
 dist/
 npm-debug.log*
+.expo-run*.log

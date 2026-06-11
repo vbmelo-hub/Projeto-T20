@@ -1,8 +1,15 @@
+// =========================
+// Imports
+// =========================
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Image,
+  ImageBackground,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -16,55 +23,60 @@ import {
   View,
 } from 'react-native';
 
-const storageKey = 'grimorio20_snack_state_v1';
+import catalogRaw from './data/magias_tormenta20_catalogo_inicial.json';
 
-const seedSpells = [
-  {
-    id: 'seta-infame',
-    name: 'Seta Infame de Talude',
-    type: 'Arcana',
-    school: 'Evocacao',
-    circle: '1o circulo',
-    execution: 'Padrao',
-    range: 'Medio',
-    duration: 'Instantanea',
-    source: 'Tormenta20',
-    target: 'Uma criatura',
-    resistance: 'Nenhuma',
-    description: 'Dispara um projetil de energia contra uma criatura no alcance.',
-    upgrades: ['+2 PM: aumenta o dano.', '+5 PM: muda o tipo de energia.'],
-  },
-  {
-    id: 'curar-ferimentos',
-    name: 'Curar Ferimentos',
-    type: 'Divina',
-    school: 'Evocacao',
-    circle: '1o circulo',
-    execution: 'Padrao',
-    range: 'Toque',
-    duration: 'Instantanea',
-    source: 'Tormenta20',
-    target: 'Uma criatura',
-    resistance: 'Vontade reduz',
-    description: 'Canaliza energia positiva para recuperar pontos de vida.',
-    upgrades: ['+1 PM: aumenta a cura.', '+5 PM: remove uma condicao.'],
-  },
-  {
-    id: 'armadura-arcana',
-    name: 'Armadura Arcana',
-    type: 'Arcana',
-    school: 'Abjuracao',
-    circle: '1o circulo',
-    execution: 'Padrao',
-    range: 'Pessoal',
-    duration: 'Cena',
-    source: 'Tormenta20',
-    target: 'Voce',
-    resistance: 'Nenhuma',
-    description: 'Cria uma protecao magica que aumenta sua defesa.',
-    upgrades: ['+2 PM: aumenta o bonus de Defesa.', '+5 PM: a duracao muda para dia.'],
-  },
-];
+// =========================
+// Configuracao e dados base
+// =========================
+
+// Assets visuais compartilhados entre telas e modais.
+const backgroundImage = require('./assets/background-app.jpg');
+const modalBackgroundImage = require('./assets/background-modal.jpg');
+const logoImage = require('./assets/logo-full.png');
+const eyeImage = require('./assets/logo-eye.png');
+const wizardImage = require('./assets/magoOtimizado_640_q64.png');
+
+// Chave unica para persistir o estado inteiro do app no AsyncStorage.
+const storageKey = 'grimorio20_snack_state_v2';
+
+// Campos de filtro usados na tela de lista de magias.
+const filterKeys = ['type', 'school', 'circle', 'execution', 'range', 'duration', 'source', 'target', 'resistance'];
+
+const filterLabels = {
+  type: 'Tipo',
+  school: 'Escola',
+  circle: 'Circulo',
+  execution: 'Execucao',
+  range: 'Alcance',
+  duration: 'Duracao',
+  source: 'Livro/Fonte',
+  target: 'Alvo, area ou efeito',
+  resistance: 'Resistencia',
+};
+
+// Estruturas padrao usadas para limpar ou inicializar formularios.
+const emptyFilters = filterKeys.reduce((values, key) => ({ ...values, [key]: '' }), {});
+
+// Catalogo base importado do arquivo local e adaptado ao formato consumido pelo app.
+const catalogSpells = catalogRaw.map((item) => ({
+  id: `catalog-${item.id}`,
+  name: item.nome,
+  type: item.tipo,
+  school: item.escola,
+  circle: `${item.circulo}o circulo`,
+  execution: item.execucao,
+  range: item.alcance,
+  duration: item.duracao,
+  source: item.fonte,
+  target: item.alvo_area_efeito,
+  resistance: item.resistencia,
+  description: item.descricao,
+  upgrades: splitLines(item.aprimoramentos),
+  tags: item.tags_busca,
+  page: item.pagina,
+  review: item.revisar_no_material_oficial,
+  catalog: true,
+}));
 
 const emptyCharacter = { name: '', race: '', characterClass: '', photo: '' };
 const emptySpell = {
@@ -82,15 +94,22 @@ const emptySpell = {
   upgrades: '',
 };
 
+// =========================
+// Componente principal
+// =========================
+
 export default function App() {
+  // Estado global de navegacao, autenticacao, dados, formularios e modais.
   const [ready, setReady] = useState(false);
   const [view, setView] = useState('login');
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
-  const [spells, setSpells] = useState(seedSpells);
+  const [spells, setSpells] = useState(catalogSpells);
   const [characters, setCharacters] = useState([]);
   const [links, setLinks] = useState([]);
   const [query, setQuery] = useState('');
+  const [filters, setFilters] = useState(emptyFilters);
+  const [draftFilters, setDraftFilters] = useState(emptyFilters);
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedSpell, setSelectedSpell] = useState(null);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
@@ -99,7 +118,11 @@ export default function App() {
   const [characterForm, setCharacterForm] = useState(emptyCharacter);
   const [spellForm, setSpellForm] = useState(emptySpell);
   const [modal, setModal] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [toast, setToast] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState(null);
 
+  // Carrega o estado salvo ao abrir o app.
   useEffect(() => {
     AsyncStorage.getItem(storageKey)
       .then((raw) => {
@@ -107,7 +130,7 @@ export default function App() {
         const data = JSON.parse(raw);
         setUsers(data.users ?? []);
         setUser(data.user ?? null);
-        setSpells(data.spells?.length ? data.spells : seedSpells);
+        setSpells(mergeCatalogWithSavedSpells(data.spells));
         setCharacters(data.characters ?? []);
         setLinks(data.links ?? []);
         setView(data.user ? 'home' : 'login');
@@ -115,6 +138,7 @@ export default function App() {
       .finally(() => setReady(true));
   }, []);
 
+  // Salva automaticamente os dados principais sempre que algo relevante muda.
   useEffect(() => {
     if (!ready) return;
     AsyncStorage.setItem(
@@ -123,27 +147,56 @@ export default function App() {
     );
   }, [ready, users, user, spells, characters, links]);
 
+  // Fecha a notificacao temporaria depois de alguns segundos.
+  useEffect(() => {
+    if (!toast) return undefined;
+    const timeout = setTimeout(() => setToast(''), 2600);
+    return () => clearTimeout(timeout);
+  }, [toast]);
+
+  // Lista final de magias mostradas na tela Home, ja com busca, filtros e ordenacao.
   const visibleSpells = useMemo(() => {
     const text = query.trim().toLowerCase();
     return [...spells]
       .filter((spell) => {
-        if (!text) return true;
-        return [spell.name, spell.description, spell.type, spell.school, spell.source]
-          .join(' ')
-          .toLowerCase()
-          .includes(text);
+        const matchesText =
+          !text ||
+          [spell.name, spell.description, spell.type, spell.school, spell.source, spell.target, spell.resistance, spell.tags, ...(spell.upgrades ?? [])]
+            .join(' ')
+            .toLowerCase()
+            .includes(text);
+        if (!matchesText) return false;
+        return filterKeys.every((key) => !filters[key] || spell[key] === filters[key]);
       })
       .sort((a, b) => {
         const result = a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' });
         return sortAsc ? result : -result;
       });
-  }, [query, sortAsc, spells]);
+  }, [query, sortAsc, spells, filters]);
 
+  // Opcoes disponiveis em cada select do modal de filtros.
+  const filterOptions = useMemo(() => {
+    return filterKeys.reduce((options, key) => {
+      const values = [...new Set(spells.map((spell) => spell[key]).filter(Boolean))].sort((a, b) =>
+        String(a).localeCompare(String(b), 'pt-BR', { sensitivity: 'base', numeric: true }),
+      );
+      return { ...options, [key]: values };
+    }, {});
+  }, [spells]);
+
+  // Contador exibido no botao de filtros da tela Home.
+  const activeFilterCount = useMemo(
+    () => Object.values(filters).filter(Boolean).length,
+    [filters],
+  );
+
+  // Lista apenas os personagens do usuario logado.
   const userCharacters = useMemo(
     () => characters.filter((character) => character.userId === user?.id),
     [characters, user],
   );
 
+  // Lista as magias vinculadas ao personagem aberto na tela de detalhes.
   const activeCharacterSpells = useMemo(() => {
     if (!selectedCharacter) return [];
     return links
@@ -153,6 +206,54 @@ export default function App() {
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
   }, [links, selectedCharacter, spells]);
 
+  // Garante que o catalogo local continue existindo mesmo quando ha dados salvos no dispositivo.
+  function mergeCatalogWithSavedSpells(savedSpells) {
+    if (!Array.isArray(savedSpells)) return catalogSpells;
+    const savedById = new Map(savedSpells.map((spell) => [spell.id, spell]));
+    const mergedCatalog = catalogSpells.map((spell) => ({ ...spell, ...(savedById.get(spell.id) ?? {}) }));
+    const customSpells = savedSpells.filter((spell) => !String(spell.id).startsWith('catalog-'));
+    return [...mergedCatalog, ...customSpells];
+  }
+
+  // Atualiza um filtro em rascunho dentro do modal da tela Home.
+  function applyFilter(key, value) {
+    setDraftFilters((current) => ({ ...current, [key]: value }));
+  }
+
+  // Abre o modal de filtros da tela de magias.
+  function openFilters() {
+    setDraftFilters(filters);
+    setModal('filters');
+  }
+
+  // Confirma e aplica os filtros escolhidos na tela de magias.
+  function submitFilters() {
+    setFilters(draftFilters);
+    setModal('');
+    setToast('Filtros aplicados.');
+  }
+
+  // Limpa todos os filtros da tela de magias.
+  function clearFilters() {
+    setFilters(emptyFilters);
+    setDraftFilters(emptyFilters);
+    setModal('');
+    setToast('Filtros limpos.');
+  }
+
+  // Abre o modal que escolhe em qual personagem a magia sera adicionada.
+  function openPickerForSpell(spell) {
+    setSelectedSpell(spell);
+    setModal('picker');
+  }
+
+  // Troca a tela atual e fecha o menu lateral, quando aberto.
+  function goTo(nextView) {
+    setView(nextView);
+    setDrawerOpen(false);
+  }
+
+  // Tela de autenticacao: valida e autentica o usuario localmente.
   function submitAuth() {
     const email = authForm.email.trim().toLowerCase();
     const password = authForm.password;
@@ -172,6 +273,7 @@ export default function App() {
       setUsers((current) => [...current, nextUser]);
       setUser(nextUser);
       setView('welcome');
+      setToast('Conta criada.');
       return;
     }
 
@@ -182,15 +284,19 @@ export default function App() {
     }
     setUser(found);
     setView('home');
+    setToast('Login realizado.');
   }
 
+  // Encerra a sessao e volta para a tela de login.
   function logout() {
     setUser(null);
     setSelectedCharacter(null);
     setSelectedSpell(null);
+    setDrawerOpen(false);
     setView('login');
   }
 
+  // Modal de personagem: cria ou atualiza um personagem do usuario.
   function saveCharacter() {
     if (!characterForm.name.trim()) {
       Alert.alert('Nome obrigatorio', 'Informe o nome do personagem.');
@@ -210,14 +316,18 @@ export default function App() {
     setSelectedCharacter(character);
     closeModal();
     setView('characters');
+    setToast(selectedCharacter ? 'Personagem atualizado.' : 'Personagem criado.');
   }
 
+  // Tela de personagens: remove um personagem e seus vinculos com magias.
   function deleteCharacter(character) {
     setCharacters((current) => current.filter((item) => item.id !== character.id));
     setLinks((current) => current.filter((item) => item.characterId !== character.id));
     if (selectedCharacter?.id === character.id) setSelectedCharacter(null);
+    setToast('Personagem excluido.');
   }
 
+  // Modal de magia: cria ou atualiza uma magia.
   function saveSpell() {
     if (!spellForm.name.trim()) {
       Alert.alert('Nome obrigatorio', 'Informe o nome da magia.');
@@ -237,8 +347,10 @@ export default function App() {
         : [...current, spell],
     );
     closeModal();
+    setToast(selectedSpell ? 'Magia atualizada.' : 'Magia cadastrada.');
   }
 
+  // Vincula uma magia escolhida a um personagem do usuario.
   function linkSpellToCharacter(characterId, spellId) {
     if (links.some((link) => link.characterId === characterId && link.spellId === spellId)) {
       Alert.alert('Magia ja vinculada', 'Este personagem ja possui essa magia.');
@@ -246,9 +358,12 @@ export default function App() {
     }
     setLinks((current) => [...current, { characterId, spellId, prepared: false }]);
     closeModal();
+    setToast('Magia adicionada ao personagem.');
   }
 
+  // Tela de detalhe do personagem: alterna o estado de magia preparada.
   function togglePrepared(spellId) {
+    const currentLink = links.find((link) => link.characterId === selectedCharacter?.id && link.spellId === spellId);
     setLinks((current) =>
       current.map((link) =>
         link.characterId === selectedCharacter.id && link.spellId === spellId
@@ -256,26 +371,71 @@ export default function App() {
           : link,
       ),
     );
+    setToast(currentLink?.prepared ? 'Magia despreparada.' : 'Magia preparada.');
   }
 
+  // Tela de detalhe do personagem: remove uma magia da lista dele.
   function removeSpellFromCharacter(spellId) {
     setLinks((current) =>
       current.filter((link) => !(link.characterId === selectedCharacter.id && link.spellId === spellId)),
     );
+    setToast('Magia removida do personagem.');
   }
 
+  // Modal generico de confirmacao para exclusoes e remocoes.
+  function openConfirmDialog({ title, message, confirmLabel = 'Excluir', onConfirm }) {
+    setConfirmDialog({ title, message, confirmLabel, onConfirm });
+  }
+
+  function closeConfirmDialog() {
+    setConfirmDialog(null);
+  }
+
+  function confirmDialogAction() {
+    if (!confirmDialog?.onConfirm) return;
+    confirmDialog.onConfirm();
+    setConfirmDialog(null);
+  }
+
+  // Abre o formulario da tela de personagens para criar ou editar.
   function openCharacterForm(character = null) {
     setSelectedCharacter(character);
     setCharacterForm(character ?? emptyCharacter);
     setModal('character');
   }
 
+  // Seleciona uma imagem local para o avatar do personagem.
+  async function pickCharacterPhoto() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+        base64: true,
+      });
+
+      if (result.canceled || !result.assets?.length) return;
+
+      const asset = result.assets[0];
+      const photo = asset.base64
+        ? `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`
+        : asset.uri;
+
+      setCharacterForm((current) => ({ ...current, photo }));
+    } catch (error) {
+      Alert.alert('Falha ao selecionar imagem', 'Nao foi possivel carregar a foto do personagem.');
+    }
+  }
+
+  // Abre o formulario de cadastro/edicao de magia.
   function openSpellForm(spell = null) {
     setSelectedSpell(spell);
     setSpellForm(spell ? { ...spell, upgrades: spell.upgrades.join('\n') } : emptySpell);
     setModal('spell-form');
   }
 
+  // Fecha o modal principal em uso.
   function closeModal() {
     setModal('');
     setSelectedSpell(null);
@@ -291,51 +451,82 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.app}>
+        {/* Barra superior visivel apenas quando o usuario esta autenticado. */}
         {user ? (
           <View style={styles.topBar}>
-            <Pressable onPress={() => setView('home')} style={styles.brandButton}>
-              <Text style={styles.brandMark}>G20</Text>
-              <Text style={styles.brandText}>Grimorio 20</Text>
+            <Pressable onPress={() => setDrawerOpen(true)} style={styles.iconButton} accessibilityLabel="Abrir menu">
+              <MenuGlyph />
             </Pressable>
-            <Pressable onPress={logout} style={styles.smallButton}>
-              <Text style={styles.smallButtonText}>Sair</Text>
+            <Pressable onPress={() => goTo('home')} style={styles.brandButton}>
+              <EyeMark compact />
+            </Pressable>
+            <Pressable onPress={() => goTo('about')} style={styles.iconButton} accessibilityLabel="Sobre o projeto">
+              <Text style={styles.iconButtonText}>i</Text>
             </Pressable>
           </View>
         ) : null}
 
-        <ScrollView contentContainerStyle={styles.content}>
-          {!user ? renderAuth() : null}
-          {user && view === 'welcome' ? renderWelcome() : null}
-          {user && view === 'home' ? renderHome() : null}
-          {user && view === 'characters' ? renderCharacters() : null}
-          {user && view === 'character' ? renderCharacterDetails() : null}
-          {user && view === 'about' ? renderAbout() : null}
-        </ScrollView>
+        <ImageBackground
+          source={user && view === 'welcome' ? modalBackgroundImage : backgroundImage}
+          resizeMode="cover"
+          style={styles.screenBackground}
+        >
+          {user && view === 'welcome' ? null : <View style={styles.backgroundOverlay} />}
+          {/* Area principal: cada bloco abaixo representa uma tela do app. */}
+          <ScrollView contentContainerStyle={user && view === 'welcome' ? styles.welcomeContent : styles.content}>
+            {!user ? renderAuth() : null}
+            {user && view === 'welcome' ? renderWelcome() : null}
+            {user && view === 'home' ? renderHome() : null}
+            {user && view === 'characters' ? renderCharacters() : null}
+            {user && view === 'character' ? renderCharacterDetails() : null}
+            {user && view === 'about' ? renderAbout() : null}
+          </ScrollView>
+        </ImageBackground>
 
+        {/* Barra de navegacao inferior das telas internas. */}
         {user ? (
           <View style={styles.bottomNav}>
             <Pressable onPress={() => setView('home')} style={styles.navButton}>
-              <Text style={[styles.navText, view === 'home' && styles.navActive]}>Magias</Text>
+              <BookGlyph active={view === 'home'} />
+              <Text style={[styles.navText, view === 'home' && styles.navActive]}>Grimorio</Text>
             </Pressable>
-            <Pressable onPress={() => openSpellForm()} style={styles.addButton}>
-              <Text style={styles.addButtonText}>+</Text>
-            </Pressable>
+            {view === 'home' ? (
+              <Pressable onPress={() => openSpellForm()} style={styles.addButton}>
+                <Text style={styles.addButtonText}>+</Text>
+              </Pressable>
+            ) : (
+              <View style={styles.addButtonSpacer} />
+            )}
             <Pressable onPress={() => setView('characters')} style={styles.navButton}>
+              <SmallFolderGlyph active={view !== 'home'} />
               <Text style={[styles.navText, view !== 'home' && styles.navActive]}>Personagens</Text>
             </Pressable>
           </View>
         ) : null}
 
         {renderModal()}
+        {renderConfirmDialog()}
+        {renderDrawer()}
+        {/* Toast simples para feedback rapido de acoes do usuario. */}
+        {toast ? (
+          <Pressable onPress={() => setToast('')} style={styles.toast}>
+            <Text style={styles.toastText}>{toast}</Text>
+          </Pressable>
+        ) : null}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 
+  // =========================
+  // Telas e modais
+  // =========================
+
+  // Tela de autenticacao: login e cadastro local do usuario.
   function renderAuth() {
     return (
-      <View style={styles.authCard}>
+      <Surface style={styles.authCard}>
         <Logo />
         <Text style={styles.title}>{authMode === 'login' ? 'Entrar' : 'Cadastro'}</Text>
         <Field label="Email" value={authForm.email} onChangeText={(email) => setAuthForm({ ...authForm, email })} />
@@ -361,28 +552,30 @@ export default function App() {
         >
           <Text style={styles.ghostText}>{authMode === 'login' ? 'Criar conta' : 'Ja tenho conta'}</Text>
         </Pressable>
-      </View>
+      </Surface>
     );
   }
 
+  // Tela de boas-vindas exibida logo apos criar conta.
   function renderWelcome() {
     return (
-      <View style={styles.card}>
-        <Logo />
-        <Text style={styles.title}>Ola, {user.username}</Text>
-        <Text style={styles.bodyText}>
-          Consulte magias, crie personagens e organize quais magias cada personagem conhece ou preparou.
+      <View style={styles.welcomePaper}>
+        <View style={styles.welcomeTint} />
+        <Text style={styles.welcomeTitle}>Bem-vindo ao Grimório 20!</Text>
+        <Text style={styles.welcomeQuote}>
+          "Seu grimório digital para consultar, organizar e explorar magias com mais facilidade."
         </Text>
-        <Pressable onPress={() => setView('home')} style={styles.primary}>
-          <Text style={styles.primaryText}>Abrir grimorio</Text>
-        </Pressable>
-        <Pressable onPress={() => setView('about')} style={styles.ghost}>
-          <Text style={styles.ghostText}>Sobre o projeto</Text>
-        </Pressable>
+        <View style={styles.welcomeMessage}>
+          <Text style={styles.welcomeMessageText}>
+            O Grimório 20 nasceu com a proposta de tornar a consulta de magias mais simples e agradável, ajudando jogadores a encontrarem com mais rapidez aquilo que precisam durante suas aventuras. Mais do que um catálogo, este projeto busca oferecer uma experiência útil, acessível e organizada para quem deseja explorar melhor seu grimório.
+          </Text>
+        </View>
+        <Image source={wizardImage} style={styles.welcomeWizard} resizeMode="contain" />
       </View>
     );
   }
 
+  // Tela Home: lista de magias com busca, ordenacao e filtros.
   function renderHome() {
     return (
       <View>
@@ -397,19 +590,29 @@ export default function App() {
           <Pressable onPress={() => setSortAsc(!sortAsc)} style={styles.sortButton}>
             <Text style={styles.sortText}>{sortAsc ? 'A-Z' : 'Z-A'}</Text>
           </Pressable>
+          <Pressable onPress={openFilters} style={styles.filterButton} accessibilityLabel="Abrir filtros">
+            <FilterGlyph />
+            {activeFilterCount ? <Text style={styles.filterBadge}>{activeFilterCount}</Text> : null}
+          </Pressable>
         </View>
+        {visibleSpells.length ? null : (
+          <Surface style={styles.card}>
+            <Text style={styles.cardTitle}>Nenhuma magia encontrada</Text>
+            <Text style={styles.bodyText}>Ajuste a busca ou limpe os filtros para ver mais resultados.</Text>
+          </Surface>
+        )}
         {visibleSpells.map((spell) => (
           <SpellCard
             key={spell.id}
             spell={spell}
-            primaryLabel="Vincular"
+            primaryLabel="+"
+            primaryA11y="Adicionar a personagem"
             onOpen={() => {
               setSelectedSpell(spell);
               setModal('spell');
             }}
             onPrimary={() => {
-              setSelectedSpell(spell);
-              setModal('picker');
+              openPickerForSpell(spell);
             }}
           />
         ))}
@@ -417,6 +620,7 @@ export default function App() {
     );
   }
 
+  // Tela de personagens: listagem de personagens do usuario e acoes rapidas.
   function renderCharacters() {
     return (
       <View>
@@ -427,60 +631,83 @@ export default function App() {
           </Pressable>
         </View>
         {userCharacters.length ? null : (
-          <View style={styles.card}>
+          <Surface style={styles.card}>
             <Text style={styles.cardTitle}>Nenhum personagem criado</Text>
             <Text style={styles.bodyText}>Crie um personagem para vincular magias a ele.</Text>
-          </View>
+          </Surface>
         )}
         {userCharacters.map((character) => {
           const spellCount = links.filter((link) => link.characterId === character.id).length;
           return (
-            <Pressable
+            <Surface
               key={character.id}
-              onPress={() => {
-                setSelectedCharacter(character);
-                setView('character');
-              }}
               style={styles.characterCard}
             >
-              <Avatar character={character} />
-              <View style={styles.characterBody}>
-                <Text style={styles.cardTitle}>{character.name}</Text>
-                <Text style={styles.bodyText}>{[character.race, character.characterClass].filter(Boolean).join(' - ') || 'Sem detalhes'}</Text>
-                <Text style={styles.bodyText}>{spellCount} magia(s)</Text>
-              </View>
+              <Pressable
+                onPress={() => {
+                  setSelectedCharacter(character);
+                  setView('character');
+                }}
+                style={styles.characterMain}
+              >
+                <Avatar character={character} />
+                <View style={styles.characterBody}>
+                  <Text style={styles.cardTitle}>{character.name}</Text>
+                  <Text style={styles.bodyText}>{[character.race, character.characterClass].filter(Boolean).join(' - ') || 'Sem detalhes'}</Text>
+                  <Text style={styles.bodyText}>Criado em: {formatDate(character.createdAt)}</Text>
+                  <Text style={styles.bodyText}>{spellCount} magia(s)</Text>
+                </View>
+              </Pressable>
               <View style={styles.inlineActions}>
-                <Pressable onPress={() => openCharacterForm(character)} style={styles.secondary}>
-                  <Text style={styles.secondaryText}>Editar</Text>
+                <Pressable
+                  onPress={() => {
+                    setSelectedCharacter(character);
+                    setView('home');
+                  }}
+                  style={styles.characterAddAction}
+                >
+                  <AddMagicGlyph />
+                  <Text style={styles.characterAddActionText}>ADD. MAGIA</Text>
                 </Pressable>
-                <Pressable onPress={() => deleteCharacter(character)} style={styles.danger}>
-                  <Text style={styles.primaryText}>Excluir</Text>
+                <Pressable onPress={() => openCharacterForm(character)} style={styles.characterIconAction}>
+                  <EditGlyph />
+                </Pressable>
+                <Pressable
+                  onPress={() =>
+                    openConfirmDialog({
+                      title: 'Excluir personagem',
+                      message: `Deseja excluir ${character.name}? Esta acao tambem remove as magias vinculadas.`,
+                      confirmLabel: 'Excluir',
+                      onConfirm: () => deleteCharacter(character),
+                    })
+                  }
+                  style={styles.characterIconAction}
+                >
+                  <DeleteGlyph />
                 </Pressable>
               </View>
-            </Pressable>
+            </Surface>
           );
         })}
       </View>
     );
   }
 
+  // Tela de detalhe do personagem com suas magias vinculadas.
   function renderCharacterDetails() {
     if (!selectedCharacter) return renderCharacters();
     return (
       <View>
-        <View style={styles.cardCentered}>
+        <Surface style={styles.cardCentered} centered>
           <Avatar character={selectedCharacter} large />
           <Text style={styles.title}>{selectedCharacter.name}</Text>
           <Text style={styles.bodyText}>{[selectedCharacter.race, selectedCharacter.characterClass].filter(Boolean).join(' - ') || 'Sem detalhes'}</Text>
-        </View>
-        <Pressable onPress={() => setView('home')} style={styles.primary}>
-          <Text style={styles.primaryText}>Aprender nova magia</Text>
-        </Pressable>
+        </Surface>
         {activeCharacterSpells.length ? null : (
-          <View style={styles.card}>
+          <Surface style={styles.card}>
             <Text style={styles.cardTitle}>Lista de magias vazia</Text>
             <Text style={styles.bodyText}>Este personagem ainda nao possui magias vinculadas.</Text>
-          </View>
+          </Surface>
         )}
         {activeCharacterSpells.map((spell) => (
           <SpellCard
@@ -493,44 +720,138 @@ export default function App() {
               setModal('spell');
             }}
             onPrimary={() => togglePrepared(spell.id)}
-            onSecondary={() => removeSpellFromCharacter(spell.id)}
+            onSecondary={() =>
+              openConfirmDialog({
+                title: 'Remover magia',
+                message: `Deseja remover ${spell.name} deste personagem?`,
+                confirmLabel: 'Remover',
+                onConfirm: () => removeSpellFromCharacter(spell.id),
+              })
+            }
           />
         ))}
+        <Pressable onPress={() => setView('home')} style={styles.learnSpellButton}>
+          <Text style={styles.primaryText}>Aprender nova magia</Text>
+        </Pressable>
       </View>
     );
   }
 
+  // Tela Sobre: apresenta o contexto academico do projeto.
   function renderAbout() {
     return (
-      <View style={styles.card}>
-        <Text style={styles.title}>Sobre o Grimorio 20</Text>
-        <Text style={styles.bodyText}>
-          Esta versao foi adaptada para Expo Snack. Os dados ficam salvos no armazenamento local do dispositivo ou do navegador.
-        </Text>
-        <Text style={styles.bodyText}>
-          Esta e a versao completa para Expo Snack, sem servidor externo.
-        </Text>
-      </View>
+      <ImageBackground
+        source={modalBackgroundImage}
+        resizeMode="cover"
+        style={styles.aboutPaper}
+        imageStyle={styles.aboutPaperImage}
+      >
+        <View style={styles.aboutTint} />
+        <View style={styles.aboutPanel}>
+          <Text style={styles.aboutTitle}>Sobre o Grimório 20</Text>
+
+          <Text style={styles.aboutBody}>
+            O Grimório 20 é um projeto acadêmico desenvolvido como parte da avaliação da disciplina de Dispositivos Móveis, no curso de Sistemas para Internet do Instituto Federal do Acre (IFAC).
+          </Text>
+
+          <Text style={styles.aboutBody}>
+            Seu propósito é disponibilizar uma aplicação prática, intuitiva e organizada para consulta e gerenciamento de magias no universo de Tormenta 20, unindo utilidade, acessibilidade e uma experiência visual agradável.
+          </Text>
+
+          <View style={styles.aboutCredits}>
+            <Text style={styles.aboutCreditText}>Disciplina ministrada por:</Text>
+            <Text style={styles.aboutCreditText}>Flávio Miranda</Text>
+          </View>
+
+          <View style={styles.aboutCredits}>
+            <Text style={styles.aboutCreditText}>Projeto desenvolvido por:</Text>
+            <Text style={styles.aboutCreditText}>Vinícius Barros de Melo</Text>
+          </View>
+
+        </View>
+      </ImageBackground>
     );
   }
 
+  // Modal principal: reusa o mesmo container para varios formularios e detalhes.
   function renderModal() {
     return (
       <Modal visible={Boolean(modal)} transparent animationType="fade" onRequestClose={closeModal}>
         <View style={styles.modalLayer}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modal}>
-            <ScrollView>
-              {modal === 'spell' && selectedSpell ? renderSpellDetails() : null}
-              {modal === 'picker' && selectedSpell ? renderPicker() : null}
-              {modal === 'character' ? renderCharacterForm() : null}
-              {modal === 'spell-form' ? renderSpellForm() : null}
-            </ScrollView>
+            <ImageBackground source={modalBackgroundImage} resizeMode="cover" style={styles.modalBackground}>
+              <ScrollView
+                style={styles.modalScroll}
+                contentContainerStyle={styles.modalScrollContent}
+                showsVerticalScrollIndicator
+                keyboardShouldPersistTaps="handled"
+                nestedScrollEnabled
+              >
+                {modal === 'spell' && selectedSpell ? renderSpellDetails() : null}
+                {modal === 'picker' && selectedSpell ? renderPicker() : null}
+                {modal === 'filters' ? renderFilters() : null}
+                {modal === 'character' ? renderCharacterForm() : null}
+                {modal === 'spell-form' ? renderSpellForm() : null}
+              </ScrollView>
+            </ImageBackground>
           </KeyboardAvoidingView>
         </View>
       </Modal>
     );
   }
 
+  // Modal pequeno de confirmacao para excluir ou remover dados.
+  function renderConfirmDialog() {
+    return (
+      <Modal visible={Boolean(confirmDialog)} transparent animationType="fade" onRequestClose={closeConfirmDialog}>
+        <View style={styles.modalLayer}>
+          <View style={styles.confirmDialog}>
+            <Text style={styles.confirmTitle}>{confirmDialog?.title || 'Confirmar exclusao'}</Text>
+            <Text style={styles.bodyText}>{confirmDialog?.message || 'Tem certeza que deseja continuar?'}</Text>
+            <View style={styles.modalActionRow}>
+              <Pressable onPress={closeConfirmDialog} style={[styles.secondary, styles.modalActionButton]}>
+                <Text style={styles.secondaryText}>Cancelar</Text>
+              </Pressable>
+              <Pressable onPress={confirmDialogAction} style={[styles.danger, styles.modalActionButton]}>
+                <Text style={styles.primaryText}>{confirmDialog?.confirmLabel || 'Excluir'}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  // Menu lateral para navegar entre as telas internas do app.
+  function renderDrawer() {
+    if (!drawerOpen) return null;
+    return (
+      <Modal visible transparent animationType="fade" onRequestClose={() => setDrawerOpen(false)}>
+        <Pressable style={styles.drawerLayer} onPress={() => setDrawerOpen(false)}>
+          <View style={styles.drawer}>
+            <Text style={styles.drawerTitle}>Grimorio 20</Text>
+            <Pressable onPress={() => goTo('welcome')} style={styles.drawerItem}>
+              <Text style={styles.drawerItemText}>Boas-vindas</Text>
+            </Pressable>
+            <Pressable onPress={() => goTo('home')} style={styles.drawerItem}>
+              <Text style={styles.drawerItemText}>Magias</Text>
+            </Pressable>
+            <Pressable onPress={() => goTo('characters')} style={styles.drawerItem}>
+              <Text style={styles.drawerItemText}>Personagens</Text>
+            </Pressable>
+            <Pressable onPress={() => goTo('about')} style={styles.drawerItem}>
+              <Text style={styles.drawerItemText}>Sobre</Text>
+            </Pressable>
+            <Pressable onPress={logout} style={styles.drawerDanger}>
+              <Text style={styles.primaryText}>Sair</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
+    );
+  }
+
+  // Modal de detalhes de uma magia selecionada.
   function renderSpellDetails() {
     return (
       <View>
@@ -546,6 +867,7 @@ export default function App() {
           <Text key={upgrade} style={styles.bodyText}>{upgrade}</Text>
         ))}
         <Text style={styles.bodyText}>Fonte: {selectedSpell.source || 'Nao informado'}</Text>
+        {renderSpellDetailAction()}
         <Pressable onPress={() => openSpellForm(selectedSpell)} style={styles.secondary}>
           <Text style={styles.secondaryText}>Editar magia</Text>
         </Pressable>
@@ -553,32 +875,100 @@ export default function App() {
     );
   }
 
-  function renderPicker() {
-    const available = userCharacters.filter(
-      (character) => !links.some((link) => link.characterId === character.id && link.spellId === selectedSpell.id),
+  // Acao principal do modal da magia: preparar ou vincular, dependendo da tela.
+  function renderSpellDetailAction() {
+    const isCharacterSpell =
+      selectedCharacter && links.some((link) => link.characterId === selectedCharacter.id && link.spellId === selectedSpell.id);
+    if (isCharacterSpell) {
+      const link = links.find((item) => item.characterId === selectedCharacter.id && item.spellId === selectedSpell.id);
+      return (
+        <Pressable onPress={() => togglePrepared(selectedSpell.id)} style={styles.primary}>
+          <Text style={styles.primaryText}>{link?.prepared ? 'Despreparar magia' : 'Preparar magia'}</Text>
+        </Pressable>
+      );
+    }
+    return (
+      <Pressable onPress={() => openPickerForSpell(selectedSpell)} style={styles.primary}>
+        <Text style={styles.primaryText}>Adicionar a personagem</Text>
+      </Pressable>
     );
+  }
+
+  // Modal que mostra apenas os personagens disponiveis para receber a magia.
+  function renderPicker() {
+    const linkedCharacterIds = new Set(
+      links
+        .filter((link) => link.spellId === selectedSpell.id)
+        .map((link) => link.characterId),
+    );
+    const available = userCharacters.filter((character) => !linkedCharacterIds.has(character.id));
+    const noCharacters = userCharacters.length === 0;
+    const allCharactersAlreadyLinked = !noCharacters && available.length === 0;
+
     return (
       <View>
-        <ModalHeader title={available.length ? 'Selecione um personagem' : 'Nenhum personagem disponivel'} />
+        <ModalHeader title={available.length ? 'Selecione um personagem' : noCharacters ? 'Lista de personagens vazia' : 'Nenhum personagem disponivel'} />
+        {noCharacters ? (
+          <Text style={styles.bodyText}>Crie um personagem antes de adicionar magias.</Text>
+        ) : null}
+        {allCharactersAlreadyLinked ? (
+          <Text style={styles.bodyText}>Todos os seus personagens ja possuem esta magia.</Text>
+        ) : null}
         {available.map((character) => (
-          <Pressable
+          <View
             key={character.id}
-            onPress={() => linkSpellToCharacter(character.id, selectedSpell.id)}
             style={styles.pickerItem}
           >
-            <Text style={styles.cardTitle}>{character.name}</Text>
-            <Text style={styles.bodyText}>{character.characterClass || 'Sem classe'}</Text>
-          </Pressable>
+            <Pressable onPress={() => linkSpellToCharacter(character.id, selectedSpell.id)}>
+              <Text style={styles.cardTitle}>{character.name}</Text>
+              <Text style={styles.bodyText}>{character.characterClass || 'Sem classe'}</Text>
+            </Pressable>
+          </View>
         ))}
-        {available.length ? null : (
+        {noCharacters ? (
           <Pressable onPress={() => openCharacterForm()} style={styles.primary}>
             <Text style={styles.primaryText}>Criar personagem</Text>
           </Pressable>
-        )}
+        ) : null}
       </View>
     );
   }
 
+  // Modal de filtros da tela Home.
+  function renderFilters() {
+    return (
+      <View>
+        <ModalHeader title="Filtros" />
+        {filterKeys.map((key) => (
+          <View key={key} style={styles.filterGroup}>
+                <Text style={styles.label}>{filterLabels[key]}</Text>
+            <View style={styles.pickerFrame}>
+              <Picker
+                selectedValue={draftFilters[key]}
+                onValueChange={(value) => applyFilter(key, value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Todos" value="" />
+                {(filterOptions[key] ?? []).map((value) => (
+                  <Picker.Item key={value} label={value} value={value} />
+                ))}
+              </Picker>
+            </View>
+          </View>
+        ))}
+        <View style={styles.modalActionRow}>
+          <Pressable onPress={clearFilters} style={[styles.secondary, styles.modalActionButton]}>
+            <Text style={styles.secondaryText}>Limpar</Text>
+          </Pressable>
+          <Pressable onPress={submitFilters} style={[styles.primary, styles.modalActionButton]}>
+            <Text style={styles.primaryText}>Filtrar itens</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
+
+  // Modal de criar/editar personagem.
   function renderCharacterForm() {
     return (
       <View>
@@ -586,7 +976,36 @@ export default function App() {
         <Field label="Nome" value={characterForm.name} onChangeText={(name) => setCharacterForm({ ...characterForm, name })} />
         <Field label="Raca" value={characterForm.race} onChangeText={(race) => setCharacterForm({ ...characterForm, race })} />
         <Field label="Classe" value={characterForm.characterClass} onChangeText={(characterClass) => setCharacterForm({ ...characterForm, characterClass })} />
-        <Field label="Foto URL" value={characterForm.photo} onChangeText={(photo) => setCharacterForm({ ...characterForm, photo })} />
+        <View style={styles.field}>
+          <Text style={styles.label}>Foto</Text>
+          {characterForm.photo ? (
+            <View style={styles.characterPhotoPreview}>
+              <Image source={{ uri: characterForm.photo }} style={styles.characterPhotoPreviewImage} />
+            </View>
+          ) : (
+            <Text style={styles.bodyText}>Nenhuma imagem selecionada.</Text>
+          )}
+          <View style={styles.modalActionRow}>
+            <Pressable onPress={pickCharacterPhoto} style={[styles.secondary, styles.modalActionButton]}>
+              <Text style={styles.secondaryText}>{characterForm.photo ? 'Trocar imagem' : 'Selecionar imagem'}</Text>
+            </Pressable>
+            {characterForm.photo ? (
+              <Pressable
+                onPress={() =>
+                  openConfirmDialog({
+                    title: 'Remover foto',
+                    message: 'Deseja remover a foto selecionada deste personagem?',
+                    confirmLabel: 'Remover',
+                    onConfirm: () => setCharacterForm((current) => ({ ...current, photo: '' })),
+                  })
+                }
+                style={[styles.ghost, styles.modalActionButton]}
+              >
+                <Text style={styles.ghostText}>Remover</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        </View>
         <Pressable onPress={saveCharacter} style={styles.primary}>
           <Text style={styles.primaryText}>Salvar</Text>
         </Pressable>
@@ -594,6 +1013,7 @@ export default function App() {
     );
   }
 
+  // Modal de criar/editar magia.
   function renderSpellForm() {
     return (
       <View>
@@ -614,6 +1034,7 @@ export default function App() {
     );
   }
 
+  // Cabecalho padrao de todos os modais principais.
   function ModalHeader({ title }) {
     return (
       <View style={styles.modalHeader}>
@@ -626,6 +1047,11 @@ export default function App() {
   }
 }
 
+// =========================
+// Componentes reutilizaveis
+// =========================
+
+// Campo de formulario reutilizado nos modais de login, personagem e magia.
 function Field({ label, value, onChangeText, secureTextEntry, multiline }) {
   return (
     <View style={styles.field}>
@@ -642,29 +1068,145 @@ function Field({ label, value, onChangeText, secureTextEntry, multiline }) {
   );
 }
 
+// Cartao base com textura de fundo usado em varias telas e listas.
+function Surface({ children, style, centered = false }) {
+  return (
+    <ImageBackground
+      source={modalBackgroundImage}
+      resizeMode="cover"
+      style={[styles.surfaceBackground, centered && styles.surfaceCentered, style]}
+      imageStyle={styles.surfaceBackgroundImage}
+    >
+      <View style={styles.cardImageTint} />
+      <View style={[styles.surfaceContent, centered && styles.surfaceCenteredContent]}>{children}</View>
+    </ImageBackground>
+  );
+}
+
+// Logo completa usada na tela de autenticacao.
 function Logo() {
   return (
     <View style={styles.logo}>
-      <Text style={styles.logoMark}>G20</Text>
-      <Text style={styles.logoText}>Grimorio 20</Text>
+      <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
     </View>
   );
 }
 
+// Marca compacta exibida na barra superior.
+function EyeMark({ compact = false }) {
+  return <Image source={eyeImage} style={[styles.eyeImage, compact && styles.eyeImageCompact]} resizeMode="contain" />;
+}
+
+// Icone do menu lateral.
+function MenuGlyph() {
+  return (
+    <View style={styles.menuGlyph}>
+      <View style={styles.menuGlyphLine} />
+      <View style={styles.menuGlyphLine} />
+      <View style={styles.menuGlyphLine} />
+    </View>
+  );
+}
+
+// Icone do botao de filtros da tela Home.
+function FilterGlyph() {
+  return (
+    <View style={styles.filterGlyph}>
+      <View style={styles.filterGlyphTop} />
+      <View style={styles.filterGlyphMiddle} />
+      <View style={styles.filterGlyphBottom} />
+    </View>
+  );
+}
+
+// Icone de pasta usado no botao de adicionar magia aos cards de magia.
+function FolderGlyph() {
+  return (
+    <View style={styles.folderGlyph}>
+      <View style={styles.folderTab} />
+      <View style={styles.folderBody}>
+        <Text style={styles.folderPlus}>+</Text>
+      </View>
+    </View>
+  );
+}
+
+// Icone do botao "ADD. MAGIA" na lista de personagens.
+function AddMagicGlyph() {
+  return (
+    <View style={styles.addMagicGlyph}>
+      <View style={styles.addMagicGlyphFrame}>
+        <View style={styles.addMagicGlyphTop} />
+        <View style={styles.addMagicGlyphPlusHorizontal} />
+        <View style={styles.addMagicGlyphPlusVertical} />
+      </View>
+    </View>
+  );
+}
+
+// Icone de editar personagem.
+function EditGlyph() {
+  return (
+    <View style={styles.editGlyph}>
+      <View style={styles.editGlyphBody} />
+      <View style={styles.editGlyphTip} />
+    </View>
+  );
+}
+
+// Icone de excluir personagem.
+function DeleteGlyph() {
+  return (
+    <View style={styles.deleteGlyph}>
+      <View style={styles.deleteGlyphLid} />
+      <View style={styles.deleteGlyphHandle} />
+      <View style={styles.deleteGlyphBody}>
+        <View style={styles.deleteGlyphCrossA} />
+        <View style={styles.deleteGlyphCrossB} />
+      </View>
+    </View>
+  );
+}
+
+// Icone de pasta da barra de navegacao inferior.
+function SmallFolderGlyph({ active }) {
+  return (
+    <View style={[styles.smallFolderGlyph, active && styles.navGlyphActive]}>
+      <View style={styles.smallFolderTab} />
+      <View style={styles.smallFolderBody} />
+    </View>
+  );
+}
+
+// Icone de livro da barra de navegacao inferior.
+function BookGlyph({ active }) {
+  return (
+    <View style={[styles.bookGlyph, active && styles.navGlyphActive]}>
+      <View style={styles.bookPage} />
+      <View style={styles.bookPage} />
+    </View>
+  );
+}
+
+// Titulo padrao de secao das telas principais.
 function SectionHeader({ title, detail }) {
   return (
     <View style={styles.sectionHeader}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.muted}>{detail}</Text>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <Text style={styles.sectionDetail}>{detail}</Text>
     </View>
   );
 }
 
-function SpellCard({ spell, onOpen, onPrimary, primaryLabel, onSecondary, secondaryLabel }) {
+// Card reutilizado para cada magia listada no app.
+function SpellCard({ spell, onOpen, onPrimary, primaryLabel, primaryA11y, onSecondary, secondaryLabel }) {
   return (
-    <View style={styles.spellCard}>
+    <Surface style={styles.spellCard}>
       <Pressable onPress={onOpen}>
-        <Text style={styles.cardTitle}>{spell.name}</Text>
+        <View style={styles.cardTitleRow}>
+          <Text style={styles.cardTitle}>{spell.name}</Text>
+          {spell.prepared ? <View style={styles.bookmark} /> : null}
+        </View>
         <View style={styles.tags}>
           {[spell.type, spell.school, spell.circle].filter(Boolean).map((tag) => (
             <Text key={tag} style={styles.tag}>{tag}</Text>
@@ -678,8 +1220,8 @@ function SpellCard({ spell, onOpen, onPrimary, primaryLabel, onSecondary, second
         <Pressable onPress={onOpen} style={styles.secondary}>
           <Text style={styles.secondaryText}>Detalhes</Text>
         </Pressable>
-        <Pressable onPress={onPrimary} style={styles.primary}>
-          <Text style={styles.primaryText}>{primaryLabel}</Text>
+        <Pressable onPress={onPrimary} style={styles.primary} accessibilityLabel={primaryA11y}>
+          {primaryA11y === 'Adicionar a personagem' ? <FolderGlyph /> : <Text style={styles.primaryText}>{primaryLabel}</Text>}
         </Pressable>
         {onSecondary ? (
           <Pressable onPress={onSecondary} style={styles.danger}>
@@ -687,10 +1229,11 @@ function SpellCard({ spell, onOpen, onPrimary, primaryLabel, onSecondary, second
           </Pressable>
         ) : null}
       </View>
-    </View>
+    </Surface>
   );
 }
 
+// Avatar do personagem: usa foto escolhida ou gera iniciais quando nao ha imagem.
 function Avatar({ character, large }) {
   if (character.photo) {
     return <Image source={{ uri: character.photo }} style={[styles.avatar, large && styles.avatarLarge]} />;
@@ -702,6 +1245,7 @@ function Avatar({ character, large }) {
   );
 }
 
+// Gera iniciais para o avatar fallback.
 function initials(name) {
   return String(name)
     .split(' ')
@@ -711,6 +1255,28 @@ function initials(name) {
     .toUpperCase();
 }
 
+// Normaliza textos com quebra de linha em arrays de aprimoramentos.
+function splitLines(value) {
+  if (Array.isArray(value)) return value.map(String).filter(Boolean);
+  return String(value ?? '')
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+// Formata data para exibir criacao do personagem em padrao brasileiro.
+function formatDate(value) {
+  if (!value) return 'Nao informado';
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value));
+}
+
+// Traduz as chaves internas do formulario de magia para labels amigaveis.
 function spellLabel(key) {
   const labels = {
     name: 'Nome',
@@ -729,18 +1295,26 @@ function spellLabel(key) {
   return labels[key] ?? key;
 }
 
+// =========================
+// Tema e estilos
+// =========================
+
+// Paleta centralizada do app.
 const colors = {
-  bg: '#f5f1eb',
-  surface: '#ffffff',
-  surfaceSoft: '#faf7f2',
-  text: '#211d1d',
-  muted: '#716967',
-  line: '#e4ddd5',
-  brand: '#b72b31',
-  brandDark: '#811d23',
+  bg: '#140101',
+  surface: 'rgba(255, 240, 211, 0.93)',
+  surfaceSoft: 'rgba(255, 232, 193, 0.82)',
+  text: '#29100d',
+  muted: '#6d5148',
+  line: 'rgba(255, 198, 121, 0.42)',
+  brand: '#c1272d',
+  brandDark: '#7f1518',
   danger: '#be2630',
+  gold: '#ffb331',
+  goldDark: '#9a5511',
 };
 
+// Estilos compartilhados de todas as telas, modais e componentes.
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
@@ -756,18 +1330,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
   },
   topBar: {
-    height: 60,
+    height: 72,
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-    backgroundColor: colors.surface,
+    backgroundColor: '#c1272d',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
+    elevation: 6,
   },
   brandButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
     gap: 10,
   },
   brandMark: {
@@ -782,62 +1360,124 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   brandText: {
-    color: colors.text,
+    color: '#fff',
     fontSize: 18,
     fontWeight: '900',
+  },
+  iconButton: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  iconButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  menuGlyph: {
+    width: 18,
+    gap: 4,
+  },
+  menuGlyphLine: {
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: '#fff',
+  },
+  screenBackground: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  backgroundOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(11, 0, 0, 0.25)',
   },
   content: {
     padding: 16,
     paddingBottom: 92,
   },
+  welcomeContent: {
+    minHeight: '100%',
+    paddingBottom: 92,
+  },
   authCard: {
     marginTop: 28,
-    padding: 22,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.line,
-    backgroundColor: colors.surface,
+    shadowColor: '#000',
+    shadowOpacity: 0.26,
+    shadowRadius: 18,
+    elevation: 8,
   },
   card: {
-    padding: 18,
     marginBottom: 14,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.line,
-    backgroundColor: colors.surface,
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 4,
   },
   cardCentered: {
-    alignItems: 'center',
-    padding: 18,
     marginBottom: 14,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.line,
-    backgroundColor: colors.surface,
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  surfaceBackground: {
+    overflow: 'hidden',
+  },
+  surfaceBackgroundImage: {
+    borderRadius: 8,
+  },
+  cardImageTint: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(255, 237, 202, 0.42)',
+  },
+  surfaceContent: {
+    padding: 18,
+  },
+  surfaceCentered: {
+    alignItems: 'stretch',
+  },
+  surfaceCenteredContent: {
+    alignItems: 'center',
   },
   logo: {
-    width: 128,
-    height: 128,
+    width: '100%',
+    minHeight: 170,
     alignSelf: 'center',
-    marginBottom: 12,
-    borderRadius: 64,
-    borderWidth: 2,
-    borderColor: '#e5b8ba',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff7f7',
+    marginBottom: 12,
   },
-  logoMark: {
-    color: colors.brand,
-    fontSize: 34,
-    lineHeight: 38,
-    fontWeight: '900',
+  logoImage: {
+    width: '100%',
+    height: 150,
   },
-  logoText: {
-    color: colors.brandDark,
-    fontSize: 12,
-    fontWeight: '900',
-    marginTop: 4,
+  eyeImage: {
+    width: 92,
+    height: 92,
+  },
+  eyeImageCompact: {
+    width: 62,
+    height: 62,
   },
   title: {
     color: colors.text,
@@ -845,6 +1485,21 @@ const styles = StyleSheet.create({
     lineHeight: 34,
     fontWeight: '900',
     marginBottom: 6,
+  },
+  sectionTitle: {
+    color: '#ffffff',
+    fontSize: 30,
+    lineHeight: 34,
+    fontWeight: '900',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+    marginBottom: 4,
+  },
+  sectionDetail: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '800',
   },
   modalTitle: {
     flex: 1,
@@ -854,21 +1509,155 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   cardTitle: {
-    color: colors.text,
+    flex: 1,
+    color: '#1e0908',
     fontSize: 18,
     fontWeight: '900',
     marginBottom: 6,
   },
+  cardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  bookmark: {
+    width: 14,
+    height: 20,
+    backgroundColor: colors.brand,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+  },
   subtitle: {
-    color: colors.muted,
+    color: colors.brandDark,
     fontWeight: '800',
     marginBottom: 12,
   },
   bodyText: {
-    color: colors.muted,
+    color: '#4a211b',
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 4,
+  },
+  welcomePaper: {
+    minHeight: '100%',
+    width: '100%',
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 32,
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  welcomeTint: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(255, 250, 242, 0.16)',
+  },
+  welcomeTitle: {
+    color: colors.brand,
+    fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
+    fontSize: 26,
+    lineHeight: 32,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 2,
+    marginBottom: 4,
+  },
+  welcomeQuote: {
+    maxWidth: 310,
+    color: '#8b7f7c',
+    fontSize: 13,
+    lineHeight: 15,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 14,
+  },
+  welcomeMessage: {
+    width: '100%',
+    maxWidth: 320,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 9,
+    backgroundColor: colors.brand,
+    marginBottom: 10,
+  },
+  welcomeMessageText: {
+    color: '#fff',
+    fontSize: 12,
+    lineHeight: 13,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+  welcomeWizard: {
+    width: '112%',
+    maxWidth: 430,
+    height: 500,
+    marginTop: 0,
+  },
+  aboutPaper: {
+    minHeight: 760,
+    marginTop: 18,
+    marginBottom: 18,
+    paddingHorizontal: 38,
+    paddingVertical: 64,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(160, 145, 126, 0.36)',
+    shadowColor: '#000',
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  aboutPaperImage: {
+    opacity: 0.86,
+  },
+  aboutTint: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(255, 250, 242, 0.18)',
+  },
+  aboutPanel: {
+    minHeight: 632,
+    paddingTop: 0,
+    paddingHorizontal: 2,
+    paddingBottom: 14,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 253, 248, 0.08)',
+  },
+  aboutTitle: {
+    width: '100%',
+    color: colors.brand,
+    fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  aboutBody: {
+    color: '#090505',
+    fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
+    fontSize: 21,
+    lineHeight: 21,
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  aboutCredits: {
+    width: '100%',
+    marginTop: 2,
+    marginBottom: 26,
+  },
+  aboutCreditText: {
+    color: '#090505',
+    fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
+    fontSize: 20,
+    lineHeight: 22,
   },
   description: {
     color: colors.text,
@@ -877,7 +1666,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   muted: {
-    color: colors.muted,
+    color: '#5f2c23',
     fontSize: 14,
     fontWeight: '700',
   },
@@ -896,8 +1685,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: '#fff',
+    borderColor: 'rgba(127, 21, 24, 0.22)',
+    backgroundColor: 'rgba(255, 255, 255, 0.86)',
     color: colors.text,
   },
   textArea: {
@@ -913,6 +1702,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.brand,
     marginTop: 8,
+    shadowColor: colors.brandDark,
+    shadowOpacity: 0.24,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  learnSpellButton: {
+    minHeight: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: colors.brand,
+    marginTop: 18,
+    marginBottom: 16,
+    shadowColor: colors.brandDark,
+    shadowOpacity: 0.24,
+    shadowRadius: 8,
+    elevation: 3,
   },
   primaryText: {
     color: '#fff',
@@ -927,8 +1735,8 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: '#f3eee8',
+    borderColor: 'rgba(127, 21, 24, 0.18)',
+    backgroundColor: 'rgba(255, 244, 225, 0.88)',
     marginTop: 8,
   },
   secondaryText: {
@@ -944,6 +1752,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#e5b8ba',
+    backgroundColor: 'rgba(255, 255, 255, 0.42)',
     marginTop: 10,
   },
   ghostText: {
@@ -959,19 +1768,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.danger,
     marginTop: 8,
-  },
-  smallButton: {
-    minHeight: 36,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.line,
-  },
-  smallButtonText: {
-    color: colors.text,
-    fontWeight: '900',
+    shadowColor: '#000',
+    shadowOpacity: 0.16,
+    shadowRadius: 7,
+    elevation: 2,
   },
   sectionHeader: {
     marginBottom: 12,
@@ -984,6 +1784,7 @@ const styles = StyleSheet.create({
   },
   searchRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
     marginBottom: 14,
   },
@@ -996,20 +1797,91 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: 'rgba(255, 198, 121, 0.64)',
+    backgroundColor: 'rgba(255, 240, 211, 0.94)',
+  },
+  filterButton: {
+    width: 48,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 198, 121, 0.64)',
+    backgroundColor: 'rgba(255, 240, 211, 0.94)',
+    position: 'relative',
+  },
+  filterGlyph: {
+    width: 22,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  filterGlyphTop: {
+    width: 22,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: colors.brand,
+  },
+  filterGlyphMiddle: {
+    width: 14,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: colors.brand,
+  },
+  filterGlyphBottom: {
+    width: 7,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: colors.brand,
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    overflow: 'hidden',
+    color: '#fff',
+    backgroundColor: colors.goldDark,
+    textAlign: 'center',
+    lineHeight: 18,
+    fontSize: 11,
+    fontWeight: '900',
   },
   sortText: {
     color: colors.text,
     fontWeight: '900',
   },
-  spellCard: {
-    padding: 16,
-    marginBottom: 12,
+  filterGroup: {
+    marginBottom: 14,
+  },
+  pickerFrame: {
+    minHeight: 44,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: colors.surface,
+    overflow: 'hidden',
+  },
+  picker: {
+    minHeight: 44,
+    color: colors.text,
+  },
+  modalActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 6,
+  },
+  modalActionButton: {
+    flex: 1,
+  },
+  spellCard: {
+    marginBottom: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.line,
   },
   tags: {
     flexDirection: 'row',
@@ -1022,29 +1894,73 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 999,
     overflow: 'hidden',
-    color: colors.brandDark,
-    backgroundColor: '#f6e7e8',
+    color: '#fff5df',
+    backgroundColor: colors.brandDark,
     fontSize: 12,
     fontWeight: '800',
   },
   prepared: {
-    color: colors.brand,
+    color: colors.brandDark,
     fontWeight: '900',
     marginTop: 6,
   },
   actions: {
     marginTop: 10,
   },
+  folderGlyph: {
+    width: 30,
+    height: 22,
+    justifyContent: 'flex-end',
+  },
+  folderTab: {
+    position: 'absolute',
+    top: 0,
+    left: 2,
+    width: 12,
+    height: 7,
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
+    backgroundColor: '#fff',
+  },
+  folderBody: {
+    height: 18,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  folderPlus: {
+    color: colors.brand,
+    fontSize: 16,
+    lineHeight: 18,
+    fontWeight: '900',
+  },
   characterCard: {
-    padding: 16,
     marginBottom: 12,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.line,
-    backgroundColor: colors.surface,
+  },
+  characterPhotoPreview: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center',
+    marginTop: 4,
+    marginBottom: 8,
+    borderRadius: 60,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(127, 21, 24, 0.18)',
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+  },
+  characterPhotoPreviewImage: {
+    width: '100%',
+    height: '100%',
+  },
+  characterMain: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 12,
+    marginBottom: 8,
   },
   characterBody: {
     flex: 1,
@@ -1053,7 +1969,152 @@ const styles = StyleSheet.create({
   inlineActions: {
     width: '100%',
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginTop: 2,
+  },
+  characterAddAction: {
+    flexGrow: 0,
+    flexShrink: 1,
+    minHeight: 34,
+    minWidth: 150,
+    maxWidth: 185,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: '#2ca32f',
+  },
+  characterAddActionText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0,
+  },
+  characterIconAction: {
+    width: 44,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  addMagicGlyph: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addMagicGlyphFrame: {
+    width: 18,
+    height: 14,
+    borderLeftWidth: 2.5,
+    borderBottomWidth: 2.5,
+    borderColor: '#ffffff',
+  },
+  addMagicGlyphTop: {
+    position: 'absolute',
+    top: 0,
+    left: 5,
+    width: 14,
+    height: 11,
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
+  },
+  addMagicGlyphPlusHorizontal: {
+    position: 'absolute',
+    top: 4.5,
+    left: 8,
+    width: 8,
+    height: 2.5,
+    borderRadius: 2,
+    backgroundColor: '#2ca32f',
+  },
+  addMagicGlyphPlusVertical: {
+    position: 'absolute',
+    top: 2,
+    left: 10.75,
+    width: 2.5,
+    height: 8,
+    borderRadius: 2,
+    backgroundColor: '#2ca32f',
+  },
+  editGlyph: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '-45deg' }],
+  },
+  editGlyphBody: {
+    width: 22,
+    height: 8,
+    borderRadius: 2,
+    backgroundColor: '#9c9c9c',
+  },
+  editGlyphTip: {
+    position: 'absolute',
+    right: -1,
+    width: 0,
+    height: 0,
+    borderTopWidth: 5,
+    borderBottomWidth: 5,
+    borderLeftWidth: 8,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: '#d2d2d2',
+  },
+  deleteGlyph: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteGlyphLid: {
+    position: 'absolute',
+    top: 4,
+    width: 22,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: colors.brand,
+  },
+  deleteGlyphHandle: {
+    position: 'absolute',
+    top: 1,
+    width: 10,
+    height: 3,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
+    backgroundColor: colors.brand,
+  },
+  deleteGlyphBody: {
+    position: 'absolute',
+    top: 7,
+    width: 19,
+    height: 17,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    backgroundColor: colors.brand,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteGlyphCrossA: {
+    position: 'absolute',
+    width: 11,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
+    transform: [{ rotate: '45deg' }],
+  },
+  deleteGlyphCrossB: {
+    position: 'absolute',
+    width: 11,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
+    transform: [{ rotate: '-45deg' }],
   },
   avatar: {
     width: 54,
@@ -1093,26 +2154,30 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: 66,
+    height: 58,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-    backgroundColor: colors.surface,
+    backgroundColor: '#c1272d',
+    shadowColor: '#000',
+    shadowOpacity: 0.24,
+    shadowRadius: 12,
+    elevation: 8,
   },
   navButton: {
     flex: 1,
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 2,
   },
   navText: {
-    color: colors.muted,
+    color: 'rgba(255, 255, 255, 0.78)',
+    fontSize: 12,
     fontWeight: '900',
   },
   navActive: {
-    color: colors.brand,
+    color: '#fff',
   },
   addButton: {
     width: 58,
@@ -1120,10 +2185,18 @@ const styles = StyleSheet.create({
     borderRadius: 29,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.brand,
+    backgroundColor: colors.brandDark,
     transform: [{ translateY: -12 }],
     borderWidth: 4,
     borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.24,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  addButtonSpacer: {
+    width: 58,
+    height: 58,
   },
   addButtonText: {
     color: '#fff',
@@ -1131,23 +2204,99 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 34,
   },
+  navGlyphActive: {
+    opacity: 1,
+  },
+  smallFolderGlyph: {
+    width: 22,
+    height: 17,
+    opacity: 0.78,
+    marginBottom: 2,
+  },
+  smallFolderTab: {
+    position: 'absolute',
+    top: 0,
+    left: 2,
+    width: 9,
+    height: 5,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
+    backgroundColor: '#fff',
+  },
+  smallFolderBody: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 13,
+    borderRadius: 3,
+    backgroundColor: '#fff',
+  },
+  bookGlyph: {
+    width: 24,
+    height: 18,
+    flexDirection: 'row',
+    gap: 2,
+    opacity: 0.78,
+    marginBottom: 2,
+  },
+  bookPage: {
+    flex: 1,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderTopWidth: 3,
+  },
   modalLayer: {
     flex: 1,
     padding: 16,
     justifyContent: 'center',
-    backgroundColor: 'rgba(20, 14, 12, 0.46)',
+    backgroundColor: 'rgba(12, 1, 1, 0.68)',
   },
   modal: {
+    width: '100%',
     maxHeight: '88%',
-    padding: 18,
     borderRadius: 8,
-    backgroundColor: colors.surface,
+    overflow: 'hidden',
+    backgroundColor: '#1a0304',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 198, 121, 0.42)',
+  },
+  modalBackground: {
+    maxHeight: '100%',
+  },
+  modalScroll: {
+    maxHeight: '100%',
+  },
+  modalScrollContent: {
+    padding: 18,
+    paddingBottom: 26,
+    backgroundColor: 'rgba(255, 237, 202, 0.18)',
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
     marginBottom: 14,
+  },
+  confirmDialog: {
+    width: '100%',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 198, 121, 0.42)',
+    backgroundColor: 'rgba(255, 244, 225, 0.98)',
+    padding: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.24,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  confirmTitle: {
+    color: colors.text,
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '900',
+    marginBottom: 10,
   },
   closeButton: {
     width: 36,
@@ -1156,7 +2305,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: 'rgba(127, 21, 24, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.48)',
   },
   closeText: {
     color: colors.muted,
@@ -1164,11 +2314,80 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   pickerItem: {
-    padding: 14,
     marginBottom: 10,
+    padding: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surfaceSoft,
+    borderColor: 'rgba(127, 21, 24, 0.28)',
+    backgroundColor: 'rgba(255, 248, 232, 0.96)',
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  drawerLayer: {
+    flex: 1,
+    backgroundColor: 'rgba(20, 14, 12, 0.36)',
+  },
+  drawer: {
+    width: 280,
+    maxWidth: '82%',
+    minHeight: '100%',
+    padding: 18,
+    paddingTop: 54,
+    backgroundColor: '#c1272d',
+    borderRightWidth: 1,
+    borderRightColor: 'rgba(255, 255, 255, 0.18)',
+  },
+  drawerTitle: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: '900',
+    marginBottom: 18,
+  },
+  drawerItem: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+  },
+  drawerItemText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  drawerDanger: {
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginTop: 14,
+    backgroundColor: colors.brandDark,
+  },
+  toast: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 74,
+    minHeight: 46,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 198, 121, 0.54)',
+    backgroundColor: 'rgba(41, 7, 7, 0.94)',
+    shadowColor: '#000',
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  toastText: {
+    color: '#ffe5b8',
+    fontSize: 14,
+    fontWeight: '900',
+    textAlign: 'center',
   },
 });

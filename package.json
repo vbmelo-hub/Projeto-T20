@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-picker/picker": "2.11.4",
     "expo": "~56.0.9",
+    "expo-image-picker": "^56.0.17",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-native-web": "^0.21.2",
-    "react-native": "0.85.3"
-  },
-  "devDependencies": {}
+    "react-native": "0.85.3",
+    "react-native-web": "^0.21.2"
+  }
 }
