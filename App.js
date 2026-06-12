@@ -1113,7 +1113,11 @@ function Logo() {
 function EyeMark({ compact = false }) {
   return (
     <View style={[styles.eyeImage, compact && styles.eyeImageCompact]}>
-      <Text style={styles.eyeMarkText}>G20</Text>
+      <Image
+        source={{ uri: imagemLogo }}
+        style={[styles.eyeLogo, compact && styles.eyeLogoCompact]}
+        resizeMode="contain"
+      />
     </View>
   );
 }
@@ -1495,23 +1499,20 @@ const styles = StyleSheet.create({
   eyeImage: {
     width: 74,
     height: 74,
-    borderRadius: 37,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.gold,
-    borderWidth: 2,
-    borderColor: colors.text,
   },
   eyeImageCompact: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 62,
+    height: 54,
   },
-  eyeMarkText: {
-    color: colors.text,
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: '900',
+  eyeLogo: {
+    width: '100%',
+    height: '100%',
+  },
+  eyeLogoCompact: {
+    width: 62,
+    height: 54,
   },
   title: {
     color: colors.text,
