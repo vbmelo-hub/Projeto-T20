@@ -23,7 +23,7 @@ import {
   View,
 } from 'react-native';
 
-import catalogRaw from './data/magias_tormenta20_catalogo_inicial.json';
+import catalogRaw from './data/magias-tormenta20-catalogo-inicial.json';
 
 // =========================
 // Configuracao e dados base
@@ -34,7 +34,7 @@ const backgroundImage = require('./assets/background-app.jpg');
 const modalBackgroundImage = require('./assets/background-modal.jpg');
 const logoImage = require('./assets/logo-full.png');
 const eyeImage = require('./assets/logo-eye.png');
-const wizardImage = require('./assets/magoOtimizado_640_q64.png');
+const wizardImage = require('./assets/mago-otimizado.png');
 
 // Chave unica para persistir o estado inteiro do app no AsyncStorage.
 const storageKey = 'grimorio20_snack_state_v2';
