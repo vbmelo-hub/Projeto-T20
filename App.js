@@ -463,7 +463,6 @@ export default function App() {
         ) : null}
 
         <View style={styles.screenBackground}>
-          {user && view === 'welcome' ? null : <View style={styles.backgroundOverlay} />}
           {/* Roteador visual: escolhe qual tela principal aparece no centro do app. */}
           <ScrollView contentContainerStyle={user && view === 'welcome' ? styles.welcomeContent : styles.content}>
             {/* Tela Login/Cadastro: exibida antes de existir usuario autenticado. */}
@@ -1325,25 +1324,23 @@ function spellLabel(key) {
 // =========================
 
 // Paleta centralizada do app.
-const colors = {
-  bg: '#f5ead7',
-  surface: '#fff8ec',
-  surfaceSoft: '#f8e7ca',
-  text: '#2f1b15',
-  muted: '#765d50',
-  line: 'rgba(142, 83, 45, 0.24)',
-  brand: '#a63f3f',
-  brandDark: '#7d2f32',
-  danger: '#b74146',
-  gold: '#d9a441',
-  goldDark: '#8b5a1f',
+const cores = {
+  fundoApp: '#592222', // Fundo geral das telas Magias, Personagens e Detalhe do Personagem.
+  superficieCartoesEModais: '#fff8ec', // Fundo dos cards, formularios, modais e toast.
+  textoPrincipal: '#2f1b15', // Texto principal escuro.
+  textoSecundario: '#765d50', // Texto auxiliar, detalhes e placeholders.
+  linhaDivisoria: 'rgba(142, 83, 45, 0.24)', // Bordas suaves dos cards e campos.
+  vermelhoPrincipalApp: '#a63f3f', // Top bar, drawer, botoes principais e icones de acao.
+  vermelhoEscuroApp: '#7d2f32', // Estados destacados, sombras e botoes centrais/saida.
+  vermelhoAcaoPerigosa: '#b74146', // Acoes destrutivas, como excluir.
+  fundoContadorFiltros: '#8b5a1f', // Badge numerico do botao de filtros.
 };
 
 // Estilos compartilhados de todas as telas, modais e componentes.
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: cores.fundoApp,
   },
   app: {
     flex: 1,
@@ -1352,12 +1349,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.bg,
+    backgroundColor: cores.fundoApp,
   },
   topBar: {
     height: 72,
     paddingHorizontal: 16,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1378,7 +1375,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     overflow: 'hidden',
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     color: '#fff',
     textAlign: 'center',
     lineHeight: 36,
@@ -1414,15 +1411,7 @@ const styles = StyleSheet.create({
   screenBackground: {
     flex: 1,
     overflow: 'hidden',
-    backgroundColor: colors.bg,
-  },
-  backgroundOverlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(255, 248, 236, 0.18)',
+    backgroundColor: cores.fundoApp,
   },
   content: {
     padding: 16,
@@ -1436,7 +1425,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
     shadowColor: '#000',
     shadowOpacity: 0.26,
     shadowRadius: 18,
@@ -1446,7 +1435,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
     shadowColor: '#000',
     shadowOpacity: 0.18,
     shadowRadius: 12,
@@ -1456,7 +1445,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
     shadowColor: '#000',
     shadowOpacity: 0.18,
     shadowRadius: 12,
@@ -1464,7 +1453,7 @@ const styles = StyleSheet.create({
   },
   surfaceBackground: {
     overflow: 'hidden',
-    backgroundColor: colors.surface,
+    backgroundColor: cores.superficieCartoesEModais,
     borderRadius: 8,
   },
   cardImageTint: {
@@ -1515,7 +1504,7 @@ const styles = StyleSheet.create({
     height: 54,
   },
   title: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontSize: 30,
     lineHeight: 34,
     fontWeight: '900',
@@ -1538,7 +1527,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     flex: 1,
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontSize: 24,
     lineHeight: 30,
     fontWeight: '900',
@@ -1558,12 +1547,12 @@ const styles = StyleSheet.create({
   bookmark: {
     width: 14,
     height: 20,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     borderBottomLeftRadius: 2,
     borderBottomRightRadius: 2,
   },
   subtitle: {
-    color: colors.brandDark,
+    color: cores.vermelhoEscuroApp,
     fontWeight: '800',
     marginBottom: 12,
   },
@@ -1591,7 +1580,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 248, 236, 0.72)',
   },
   welcomeTitle: {
-    color: colors.brand,
+    color: cores.vermelhoPrincipalApp,
     fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
     fontSize: 26,
     lineHeight: 32,
@@ -1602,7 +1591,7 @@ const styles = StyleSheet.create({
   },
   welcomeQuote: {
     maxWidth: 310,
-    color: colors.muted,
+    color: cores.textoSecundario,
     fontSize: 13,
     lineHeight: 15,
     fontWeight: '700',
@@ -1617,11 +1606,11 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     backgroundColor: '#f3dfba',
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
     marginBottom: 10,
   },
   welcomeMessageText: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontSize: 12,
     lineHeight: 13,
     fontWeight: '900',
@@ -1642,8 +1631,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: cores.linhaDivisoria,
+    backgroundColor: cores.superficieCartoesEModais,
     shadowColor: '#000',
     shadowOpacity: 0.22,
     shadowRadius: 10,
@@ -1667,7 +1656,7 @@ const styles = StyleSheet.create({
   },
   aboutTitle: {
     width: '100%',
-    color: colors.brand,
+    color: cores.vermelhoPrincipalApp,
     fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
     fontSize: 28,
     lineHeight: 34,
@@ -1695,7 +1684,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   description: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontSize: 15,
     lineHeight: 22,
     marginVertical: 12,
@@ -1722,7 +1711,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(127, 21, 24, 0.22)',
     backgroundColor: 'rgba(255, 255, 255, 0.86)',
-    color: colors.text,
+    color: cores.textoPrincipal,
   },
   textArea: {
     minHeight: 96,
@@ -1735,9 +1724,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     marginTop: 8,
-    shadowColor: colors.brandDark,
+    shadowColor: cores.vermelhoEscuroApp,
     shadowOpacity: 0.24,
     shadowRadius: 8,
     elevation: 3,
@@ -1749,10 +1738,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     marginTop: 18,
     marginBottom: 16,
-    shadowColor: colors.brandDark,
+    shadowColor: cores.vermelhoEscuroApp,
     shadowOpacity: 0.24,
     shadowRadius: 8,
     elevation: 3,
@@ -1775,7 +1764,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   secondaryText: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontWeight: '900',
   },
   ghost: {
@@ -1791,7 +1780,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   ghostText: {
-    color: colors.brand,
+    color: cores.vermelhoPrincipalApp,
     fontWeight: '900',
   },
   danger: {
@@ -1801,7 +1790,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 9,
     borderRadius: 8,
-    backgroundColor: colors.danger,
+    backgroundColor: cores.vermelhoAcaoPerigosa,
     marginTop: 8,
     shadowColor: '#000',
     shadowOpacity: 0.16,
@@ -1856,19 +1845,19 @@ const styles = StyleSheet.create({
     width: 22,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   filterGlyphMiddle: {
     width: 14,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   filterGlyphBottom: {
     width: 7,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   filterBadge: {
     position: 'absolute',
@@ -1879,14 +1868,14 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     overflow: 'hidden',
     color: '#fff',
-    backgroundColor: colors.goldDark,
+    backgroundColor: cores.fundoContadorFiltros,
     textAlign: 'center',
     lineHeight: 18,
     fontSize: 11,
     fontWeight: '900',
   },
   sortText: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontWeight: '900',
   },
   filterGroup: {
@@ -1896,13 +1885,13 @@ const styles = StyleSheet.create({
     minHeight: 44,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: cores.linhaDivisoria,
+    backgroundColor: cores.superficieCartoesEModais,
     overflow: 'hidden',
   },
   picker: {
     minHeight: 44,
-    color: colors.text,
+    color: cores.textoPrincipal,
   },
   modalActionRow: {
     flexDirection: 'row',
@@ -1916,7 +1905,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
   },
   tags: {
     flexDirection: 'row',
@@ -1930,12 +1919,12 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: 'hidden',
     color: '#fff5df',
-    backgroundColor: colors.brandDark,
+    backgroundColor: cores.vermelhoEscuroApp,
     fontSize: 12,
     fontWeight: '800',
   },
   prepared: {
-    color: colors.brandDark,
+    color: cores.vermelhoEscuroApp,
     fontWeight: '900',
     marginTop: 6,
   },
@@ -1965,7 +1954,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   folderPlus: {
-    color: colors.brand,
+    color: cores.vermelhoPrincipalApp,
     fontSize: 16,
     lineHeight: 18,
     fontWeight: '900',
@@ -1974,7 +1963,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
   },
   characterPhotoPreview: {
     width: 120,
@@ -2113,7 +2102,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   deleteGlyphHandle: {
     position: 'absolute',
@@ -2122,7 +2111,7 @@ const styles = StyleSheet.create({
     height: 3,
     borderTopLeftRadius: 2,
     borderTopRightRadius: 2,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   deleteGlyphBody: {
     position: 'absolute',
@@ -2131,7 +2120,7 @@ const styles = StyleSheet.create({
     height: 17,
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -2157,7 +2146,7 @@ const styles = StyleSheet.create({
     borderRadius: 27,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   avatarLarge: {
     width: 92,
@@ -2176,7 +2165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
   },
   squareButtonText: {
     color: '#fff',
@@ -2193,7 +2182,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     shadowColor: '#000',
     shadowOpacity: 0.24,
     shadowRadius: 12,
@@ -2220,7 +2209,7 @@ const styles = StyleSheet.create({
     borderRadius: 29,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.brandDark,
+    backgroundColor: cores.vermelhoEscuroApp,
     transform: [{ translateY: -12 }],
     borderWidth: 4,
     borderColor: '#fff',
@@ -2293,9 +2282,9 @@ const styles = StyleSheet.create({
     maxHeight: '88%',
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: colors.surface,
+    backgroundColor: cores.superficieCartoesEModais,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: cores.linhaDivisoria,
   },
   modalBackground: {
     maxHeight: '100%',
@@ -2306,7 +2295,7 @@ const styles = StyleSheet.create({
   modalScrollContent: {
     padding: 18,
     paddingBottom: 26,
-    backgroundColor: colors.surface,
+    backgroundColor: cores.superficieCartoesEModais,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -2327,7 +2316,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   confirmTitle: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontSize: 22,
     lineHeight: 28,
     fontWeight: '900',
@@ -2344,7 +2333,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.48)',
   },
   closeText: {
-    color: colors.muted,
+    color: cores.textoSecundario,
     fontSize: 18,
     fontWeight: '900',
   },
@@ -2370,7 +2359,7 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     padding: 18,
     paddingTop: 54,
-    backgroundColor: colors.brand,
+    backgroundColor: cores.vermelhoPrincipalApp,
     borderRightWidth: 1,
     borderRightColor: 'rgba(255, 255, 255, 0.18)',
   },
@@ -2400,7 +2389,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     marginTop: 14,
-    backgroundColor: colors.brandDark,
+    backgroundColor: cores.vermelhoEscuroApp,
   },
   toast: {
     position: 'absolute',
@@ -2420,7 +2409,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   toastText: {
-    color: colors.text,
+    color: cores.textoPrincipal,
     fontSize: 14,
     fontWeight: '900',
     textAlign: 'center',
