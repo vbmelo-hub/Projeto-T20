@@ -545,7 +545,7 @@ export default function App() {
   }
 
   // Tela de boas-vindas exibida logo apos criar conta.
-  function renderWelcome() {
+  function renderWelcome() {  
     return (
       <View style={styles.welcomePaper}>
         <View style={styles.welcomeTint} />
@@ -1282,17 +1282,17 @@ function spellLabel(key) {
 
 // Paleta centralizada do app.
 const colors = {
-  bg: '#140101',
-  surface: 'rgba(255, 240, 211, 0.93)',
-  surfaceSoft: 'rgba(255, 232, 193, 0.82)',
-  text: '#29100d',
-  muted: '#6d5148',
-  line: 'rgba(255, 198, 121, 0.42)',
-  brand: '#c1272d',
-  brandDark: '#7f1518',
-  danger: '#be2630',
-  gold: '#ffb331',
-  goldDark: '#9a5511',
+  bg: '#f5ead7',
+  surface: '#fff8ec',
+  surfaceSoft: '#f8e7ca',
+  text: '#2f1b15',
+  muted: '#765d50',
+  line: 'rgba(142, 83, 45, 0.24)',
+  brand: '#a63f3f',
+  brandDark: '#7d2f32',
+  danger: '#b74146',
+  gold: '#d9a441',
+  goldDark: '#8b5a1f',
 };
 
 // Estilos compartilhados de todas as telas, modais e componentes.
@@ -1313,7 +1313,7 @@ const styles = StyleSheet.create({
   topBar: {
     height: 72,
     paddingHorizontal: 16,
-    backgroundColor: '#c1272d',
+    backgroundColor: colors.brand,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1351,7 +1351,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255, 248, 236, 0.16)',
   },
   iconButtonText: {
     color: '#fff',
@@ -1365,11 +1365,12 @@ const styles = StyleSheet.create({
   menuGlyphLine: {
     height: 2,
     borderRadius: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff8ec',
   },
   screenBackground: {
     flex: 1,
     overflow: 'hidden',
+    backgroundColor: colors.bg,
   },
   backgroundOverlay: {
     position: 'absolute',
@@ -1377,7 +1378,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(11, 0, 0, 0.25)',
+    backgroundColor: 'rgba(255, 248, 236, 0.18)',
   },
   content: {
     padding: 16,
@@ -1419,8 +1420,7 @@ const styles = StyleSheet.create({
   },
   surfaceBackground: {
     overflow: 'hidden',
-  },
-  surfaceBackgroundImage: {
+    backgroundColor: colors.surface,
     borderRadius: 8,
   },
   cardImageTint: {
@@ -1429,7 +1429,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(255, 237, 202, 0.42)',
+    backgroundColor: 'rgba(244, 216, 172, 0.28)',
   },
   surfaceContent: {
     padding: 18,
@@ -1550,7 +1550,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(255, 250, 242, 0.16)',
+    backgroundColor: 'rgba(255, 248, 236, 0.72)',
   },
   welcomeTitle: {
     color: colors.brand,
@@ -1564,7 +1564,7 @@ const styles = StyleSheet.create({
   },
   welcomeQuote: {
     maxWidth: 310,
-    color: '#8b7f7c',
+    color: colors.muted,
     fontSize: 13,
     lineHeight: 15,
     fontWeight: '700',
@@ -1577,21 +1577,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 9,
-    backgroundColor: colors.brand,
+    backgroundColor: '#f3dfba',
+    borderWidth: 1,
+    borderColor: colors.line,
     marginBottom: 10,
   },
   welcomeMessageText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 12,
     lineHeight: 13,
     fontWeight: '900',
     textAlign: 'center',
-  },
-  welcomeWizard: {
-    width: '112%',
-    maxWidth: 430,
-    height: 500,
-    marginTop: 0,
   },
   aboutPaper: {
     minHeight: 760,
@@ -1602,14 +1598,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(160, 145, 126, 0.36)',
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     shadowColor: '#000',
     shadowOpacity: 0.22,
     shadowRadius: 10,
     elevation: 5,
-  },
-  aboutPaperImage: {
-    opacity: 0.86,
   },
   aboutTint: {
     position: 'absolute',
@@ -1617,7 +1611,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(255, 250, 242, 0.18)',
+    backgroundColor: 'rgba(246, 228, 196, 0.42)',
   },
   aboutPanel: {
     minHeight: 632,
@@ -1625,7 +1619,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     paddingBottom: 14,
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 253, 248, 0.08)',
+    backgroundColor: 'rgba(255, 248, 236, 0.44)',
   },
   aboutTitle: {
     width: '100%',
@@ -2155,7 +2149,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#c1272d',
+    backgroundColor: colors.brand,
     shadowColor: '#000',
     shadowOpacity: 0.24,
     shadowRadius: 12,
@@ -2248,16 +2242,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     justifyContent: 'center',
-    backgroundColor: 'rgba(12, 1, 1, 0.68)',
+    backgroundColor: 'rgba(47, 27, 21, 0.36)',
   },
   modal: {
     width: '100%',
     maxHeight: '88%',
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: '#1a0304',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: 'rgba(255, 198, 121, 0.42)',
+    borderColor: colors.line,
   },
   modalBackground: {
     maxHeight: '100%',
@@ -2268,7 +2262,7 @@ const styles = StyleSheet.create({
   modalScrollContent: {
     padding: 18,
     paddingBottom: 26,
-    backgroundColor: 'rgba(255, 237, 202, 0.18)',
+    backgroundColor: colors.surface,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -2324,7 +2318,7 @@ const styles = StyleSheet.create({
   },
   drawerLayer: {
     flex: 1,
-    backgroundColor: 'rgba(20, 14, 12, 0.36)',
+    backgroundColor: 'rgba(47, 27, 21, 0.24)',
   },
   drawer: {
     width: 280,
@@ -2332,7 +2326,7 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     padding: 18,
     paddingTop: 54,
-    backgroundColor: '#c1272d',
+    backgroundColor: colors.brand,
     borderRightWidth: 1,
     borderRightColor: 'rgba(255, 255, 255, 0.18)',
   },
@@ -2374,15 +2368,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 198, 121, 0.54)',
-    backgroundColor: 'rgba(41, 7, 7, 0.94)',
+    borderColor: 'rgba(142, 83, 45, 0.3)',
+    backgroundColor: '#fff8ec',
     shadowColor: '#000',
     shadowOpacity: 0.28,
     shadowRadius: 12,
     elevation: 8,
   },
   toastText: {
-    color: '#ffe5b8',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '900',
     textAlign: 'center',
