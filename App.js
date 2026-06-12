@@ -9,7 +9,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Image,
-  ImageBackground,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -28,13 +27,6 @@ import catalogRaw from './data/magias-tormenta20-catalogo-inicial.json';
 // =========================
 // Configuracao e dados base
 // =========================
-
-// Assets visuais compartilhados entre telas e modais.
-const backgroundImage = require('./assets/background-app.jpg');
-const modalBackgroundImage = require('./assets/background-modal.jpg');
-const logoImage = require('./assets/logo-full.png');
-const eyeImage = require('./assets/logo-eye.png');
-const wizardImage = require('./assets/mago-otimizado.png');
 
 // Chave unica para persistir o estado inteiro do app no AsyncStorage.
 const storageKey = 'grimorio20_snack_state_v2';
@@ -468,11 +460,7 @@ export default function App() {
           </View>
         ) : null}
 
-        <ImageBackground
-          source={user && view === 'welcome' ? modalBackgroundImage : backgroundImage}
-          resizeMode="cover"
-          style={styles.screenBackground}
-        >
+        <View style={styles.screenBackground}>
           {user && view === 'welcome' ? null : <View style={styles.backgroundOverlay} />}
           {/* Area principal: cada bloco abaixo representa uma tela do app. */}
           <ScrollView contentContainerStyle={user && view === 'welcome' ? styles.welcomeContent : styles.content}>
@@ -483,7 +471,7 @@ export default function App() {
             {user && view === 'character' ? renderCharacterDetails() : null}
             {user && view === 'about' ? renderAbout() : null}
           </ScrollView>
-        </ImageBackground>
+        </View>
 
         {/* Barra de navegacao inferior das telas internas. */}
         {user ? (
@@ -570,7 +558,6 @@ export default function App() {
             O Grimório 20 nasceu com a proposta de tornar a consulta de magias mais simples e agradável, ajudando jogadores a encontrarem com mais rapidez aquilo que precisam durante suas aventuras. Mais do que um catálogo, este projeto busca oferecer uma experiência útil, acessível e organizada para quem deseja explorar melhor seu grimório.
           </Text>
         </View>
-        <Image source={wizardImage} style={styles.welcomeWizard} resizeMode="contain" />
       </View>
     );
   }
@@ -740,12 +727,7 @@ export default function App() {
   // Tela Sobre: apresenta o contexto academico do projeto.
   function renderAbout() {
     return (
-      <ImageBackground
-        source={modalBackgroundImage}
-        resizeMode="cover"
-        style={styles.aboutPaper}
-        imageStyle={styles.aboutPaperImage}
-      >
+      <View style={styles.aboutPaper}>
         <View style={styles.aboutTint} />
         <View style={styles.aboutPanel}>
           <Text style={styles.aboutTitle}>Sobre o Grimório 20</Text>
@@ -769,7 +751,7 @@ export default function App() {
           </View>
 
         </View>
-      </ImageBackground>
+      </View>
     );
   }
 
@@ -779,7 +761,7 @@ export default function App() {
       <Modal visible={Boolean(modal)} transparent animationType="fade" onRequestClose={closeModal}>
         <View style={styles.modalLayer}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modal}>
-            <ImageBackground source={modalBackgroundImage} resizeMode="cover" style={styles.modalBackground}>
+            <View style={styles.modalBackground}>
               <ScrollView
                 style={styles.modalScroll}
                 contentContainerStyle={styles.modalScrollContent}
@@ -793,7 +775,7 @@ export default function App() {
                 {modal === 'character' ? renderCharacterForm() : null}
                 {modal === 'spell-form' ? renderSpellForm() : null}
               </ScrollView>
-            </ImageBackground>
+            </View>
           </KeyboardAvoidingView>
         </View>
       </Modal>
@@ -1071,15 +1053,10 @@ function Field({ label, value, onChangeText, secureTextEntry, multiline }) {
 // Cartao base com textura de fundo usado em varias telas e listas.
 function Surface({ children, style, centered = false }) {
   return (
-    <ImageBackground
-      source={modalBackgroundImage}
-      resizeMode="cover"
-      style={[styles.surfaceBackground, centered && styles.surfaceCentered, style]}
-      imageStyle={styles.surfaceBackgroundImage}
-    >
+    <View style={[styles.surfaceBackground, centered && styles.surfaceCentered, style]}>
       <View style={styles.cardImageTint} />
       <View style={[styles.surfaceContent, centered && styles.surfaceCenteredContent]}>{children}</View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -1087,14 +1064,18 @@ function Surface({ children, style, centered = false }) {
 function Logo() {
   return (
     <View style={styles.logo}>
-      <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
+      <Text style={styles.logoText}>Grimorio 20</Text>
     </View>
   );
 }
 
 // Marca compacta exibida na barra superior.
 function EyeMark({ compact = false }) {
-  return <Image source={eyeImage} style={[styles.eyeImage, compact && styles.eyeImageCompact]} resizeMode="contain" />;
+  return (
+    <View style={[styles.eyeImage, compact && styles.eyeImageCompact]}>
+      <Text style={styles.eyeMarkText}>G20</Text>
+    </View>
+  );
 }
 
 // Icone do menu lateral.
@@ -1467,17 +1448,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 12,
   },
-  logoImage: {
-    width: '100%',
-    height: 150,
+  logoText: {
+    color: colors.text,
+    fontSize: 36,
+    lineHeight: 42,
+    fontWeight: '900',
+    textAlign: 'center',
   },
   eyeImage: {
-    width: 92,
-    height: 92,
+    width: 74,
+    height: 74,
+    borderRadius: 37,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.gold,
+    borderWidth: 2,
+    borderColor: colors.text,
   },
   eyeImageCompact: {
-    width: 62,
-    height: 62,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  eyeMarkText: {
+    color: colors.text,
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '900',
   },
   title: {
     color: colors.text,
