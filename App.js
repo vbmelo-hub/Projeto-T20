@@ -560,11 +560,11 @@ export default function App() {
     return (
       <View style={styles.welcomePaper}>
         <View style={styles.welcomeTint} />
+        <View style={styles.welcomeMessage}>
         <Text style={styles.welcomeTitle}>Bem-vindo ao Grimório 20!</Text>
         <Text style={styles.welcomeQuote}>
           "Seu grimório digital para consultar, organizar e explorar magias com mais facilidade."
         </Text>
-        <View style={styles.welcomeMessage}>
           <Text style={styles.welcomeMessageText}>
             O Grimório 20 nasceu com a proposta de tornar a consulta de magias mais simples e agradável, ajudando jogadores a encontrarem com mais rapidez aquilo que precisam durante suas aventuras. Mais do que um catálogo, este projeto busca oferecer uma experiência útil, acessível e organizada para quem deseja explorar melhor seu grimório.
           </Text>
@@ -1577,7 +1577,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(255, 248, 236, 0.72)',
   },
   welcomeTitle: {
     color: cores.vermelhoPrincipalApp,
