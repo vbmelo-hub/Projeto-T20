@@ -2,7 +2,7 @@
   "name": "projeto-t20-snack",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "App.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -15,8 +15,6 @@
     "expo": "~54.0.0",
     "expo-image-picker": "~17.0.11",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-native": "0.81.5",
-    "react-native-web": "^0.21.2"
+    "react-native": "0.81.5"
   }
 }
