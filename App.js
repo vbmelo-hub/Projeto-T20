@@ -23,12 +23,11 @@ import {
 } from 'react-native';
 
 import catalogRaw from './data/magias-tormenta20-catalogo-inicial.json';
+import imagemMago from './data/imagem-mago';
 
 // =========================
 // Configuracao e dados base
 // =========================
-
-const imagemMago = require('./assets/mago-otimizado.png');
 
 // Chave unica para persistir o estado inteiro do app no AsyncStorage.
 const storageKey = 'grimorio20_snack_state_v2';
@@ -560,7 +559,7 @@ export default function App() {
             O Grimório 20 nasceu com a proposta de tornar a consulta de magias mais simples e agradável, ajudando jogadores a encontrarem com mais rapidez aquilo que precisam durante suas aventuras. Mais do que um catálogo, este projeto busca oferecer uma experiência útil, acessível e organizada para quem deseja explorar melhor seu grimório.
           </Text>
         </View>
-        <Image source={imagemMago} style={styles.magoBoasVindas} resizeMode="contain" />
+        <Image source={{ uri: imagemMago }} style={styles.magoBoasVindas} resizeMode="contain" />
       </View>
     );
   }
