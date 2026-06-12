@@ -23,6 +23,7 @@ import {
 } from 'react-native';
 
 import catalogRaw from './data/magias-tormenta20-catalogo-inicial.json';
+import imagemLogo from './data/imagem-logo';
 import imagemMago from './data/imagem-mago';
 
 // =========================
@@ -1103,7 +1104,7 @@ function Surface({ children, style, centered = false }) {
 function Logo() {
   return (
     <View style={styles.logo}>
-      <Text style={styles.logoText}>Grimorio 20</Text>
+      <Image source={{ uri: imagemLogo }} style={styles.imagemLogo} resizeMode="contain" />
     </View>
   );
 }
@@ -1487,12 +1488,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 12,
   },
-  logoText: {
-    color: colors.text,
-    fontSize: 36,
-    lineHeight: 42,
-    fontWeight: '900',
-    textAlign: 'center',
+  imagemLogo: {
+    width: '100%',
+    height: 150,
   },
   eyeImage: {
     width: 74,
