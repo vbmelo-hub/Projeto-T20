@@ -446,7 +446,7 @@ export default function App() {
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.app}>
-        {/* Barra superior visivel apenas quando o usuario esta autenticado. */}
+        {/* Layout global: barra superior das telas internas, visivel apos login. */}
         {user ? (
           <View style={styles.topBar}>
             <Pressable onPress={() => setDrawerOpen(true)} style={styles.iconButton} accessibilityLabel="Abrir menu">
@@ -463,18 +463,24 @@ export default function App() {
 
         <View style={styles.screenBackground}>
           {user && view === 'welcome' ? null : <View style={styles.backgroundOverlay} />}
-          {/* Area principal: cada bloco abaixo representa uma tela do app. */}
+          {/* Roteador visual: escolhe qual tela principal aparece no centro do app. */}
           <ScrollView contentContainerStyle={user && view === 'welcome' ? styles.welcomeContent : styles.content}>
+            {/* Tela Login/Cadastro: exibida antes de existir usuario autenticado. */}
             {!user ? renderAuth() : null}
+            {/* Tela Boas-vindas: exibida apos cadastro e tambem pelo menu lateral. */}
             {user && view === 'welcome' ? renderWelcome() : null}
+            {/* Tela Grimorio/Magias: lista, busca, filtros e cadastro de magias. */}
             {user && view === 'home' ? renderHome() : null}
+            {/* Tela Personagens: lista os personagens criados pelo usuario. */}
             {user && view === 'characters' ? renderCharacters() : null}
+            {/* Tela Detalhe do Personagem: mostra dados e magias vinculadas. */}
             {user && view === 'character' ? renderCharacterDetails() : null}
+            {/* Tela Sobre: apresenta contexto academico e creditos do projeto. */}
             {user && view === 'about' ? renderAbout() : null}
           </ScrollView>
         </View>
 
-        {/* Barra de navegacao inferior das telas internas. */}
+        {/* Layout global: barra inferior de navegacao entre Grimorio e Personagens. */}
         {user ? (
           <View style={styles.bottomNav}>
             <Pressable onPress={() => setView('home')} style={styles.navButton}>
@@ -498,7 +504,7 @@ export default function App() {
         {renderModal()}
         {renderConfirmDialog()}
         {renderDrawer()}
-        {/* Toast simples para feedback rapido de acoes do usuario. */}
+        {/* Feedback global: toast temporario para confirmar acoes do usuario. */}
         {toast ? (
           <Pressable onPress={() => setToast('')} style={styles.toast}>
             <Text style={styles.toastText}>{toast}</Text>
@@ -512,7 +518,9 @@ export default function App() {
   // Telas e modais
   // =========================
 
-  // Tela de autenticacao: login e cadastro local do usuario.
+  // Tela Login/Cadastro:
+  // Renderiza o formulario de autenticacao local. Alterna entre entrar e criar conta,
+  // sem depender de backend, usando os dados salvos no AsyncStorage.
   function renderAuth() {
     return (
       <Surface style={styles.authCard}>
@@ -545,7 +553,9 @@ export default function App() {
     );
   }
 
-  // Tela de boas-vindas exibida logo apos criar conta.
+  // Tela Boas-vindas:
+  // Aparece logo apos o cadastro e tambem pode ser aberta pelo menu lateral.
+  // Contem a mensagem de apresentacao do Grimorio 20 e a imagem embutida do mago.
   function renderWelcome() {  
     return (
       <View style={styles.welcomePaper}>
@@ -564,7 +574,9 @@ export default function App() {
     );
   }
 
-  // Tela Home: lista de magias com busca, ordenacao e filtros.
+  // Tela Grimorio/Magias:
+  // Tela principal apos login.
+  // ordenacao e filtros, e abre os modais de detalhe, vinculo e cadastro.
   function renderHome() {
     return (
       <View>
@@ -609,7 +621,9 @@ export default function App() {
     );
   }
 
-  // Tela de personagens: listagem de personagens do usuario e acoes rapidas.
+  // Tela Personagens:
+  // Lista todos os personagens do usuario autenticado. A partir daqui e possivel
+  // abrir detalhes, editar, excluir ou iniciar o fluxo para adicionar magias.
   function renderCharacters() {
     return (
       <View>
@@ -682,7 +696,9 @@ export default function App() {
     );
   }
 
-  // Tela de detalhe do personagem com suas magias vinculadas.
+  // Tela Detalhe do Personagem:
+  // Mostra o personagem selecionado, suas informacoes principais e todas as
+  // magias vinculadas a ele, incluindo acoes de preparar, despreparar e remover.
   function renderCharacterDetails() {
     if (!selectedCharacter) return renderCharacters();
     return (
@@ -726,7 +742,9 @@ export default function App() {
     );
   }
 
-  // Tela Sobre: apresenta o contexto academico do projeto.
+  // Tela Sobre:
+  // Tela institucional do app. Explica o contexto academico, o objetivo do
+  // projeto e os creditos da disciplina/desenvolvimento.
   function renderAbout() {
     return (
       <View style={styles.aboutPaper}>
@@ -757,7 +775,10 @@ export default function App() {
     );
   }
 
-  // Modal principal: reusa o mesmo container para varios formularios e detalhes.
+  // Modal Principal:
+  // Container compartilhado dos fluxos sobrepostos. O conteudo interno muda
+  // conforme `modal`: detalhe de magia, seletor de personagem, filtros,
+  // formulario de personagem ou formulario de magia.
   function renderModal() {
     return (
       <Modal visible={Boolean(modal)} transparent animationType="fade" onRequestClose={closeModal}>
@@ -784,7 +805,9 @@ export default function App() {
     );
   }
 
-  // Modal pequeno de confirmacao para excluir ou remover dados.
+  // Modal Confirmacao:
+  // Dialogo pequeno usado antes de acoes destrutivas, como excluir personagem
+  // ou remover magia vinculada.
   function renderConfirmDialog() {
     return (
       <Modal visible={Boolean(confirmDialog)} transparent animationType="fade" onRequestClose={closeConfirmDialog}>
@@ -806,7 +829,9 @@ export default function App() {
     );
   }
 
-  // Menu lateral para navegar entre as telas internas do app.
+  // Menu Lateral:
+  // Drawer de navegacao das telas internas: Boas-vindas, Magias,
+  // Personagens, Sobre e acao de sair.
   function renderDrawer() {
     if (!drawerOpen) return null;
     return (
@@ -835,7 +860,9 @@ export default function App() {
     );
   }
 
-  // Modal de detalhes de uma magia selecionada.
+  // Modal Detalhe da Magia:
+  // Mostra os campos completos da magia selecionada e as acoes disponiveis
+  // no contexto atual, como adicionar a personagem ou editar.
   function renderSpellDetails() {
     return (
       <View>
@@ -860,6 +887,9 @@ export default function App() {
   }
 
   // Acao principal do modal da magia: preparar ou vincular, dependendo da tela.
+  // Acao do Modal Detalhe da Magia:
+  // Define qual botao aparece no rodape do detalhe da magia, variando conforme
+  // a tela de origem: adicionar a personagem, remover da ficha ou apenas fechar.
   function renderSpellDetailAction() {
     const isCharacterSpell =
       selectedCharacter && links.some((link) => link.characterId === selectedCharacter.id && link.spellId === selectedSpell.id);
@@ -878,7 +908,9 @@ export default function App() {
     );
   }
 
-  // Modal que mostra apenas os personagens disponiveis para receber a magia.
+  // Modal Adicionar Magia a Personagem:
+  // Lista somente os personagens que ainda nao possuem a magia selecionada,
+  // evitando vinculos duplicados.
   function renderPicker() {
     const linkedCharacterIds = new Set(
       links
@@ -918,7 +950,8 @@ export default function App() {
     );
   }
 
-  // Modal de filtros da tela Home.
+  // Modal Filtros da Tela Grimorio/Magias:
+  // Renderiza os campos de filtro usados pela lista principal de magias.
   function renderFilters() {
     return (
       <View>
@@ -952,7 +985,9 @@ export default function App() {
     );
   }
 
-  // Modal de criar/editar personagem.
+  // Modal Criar/Editar Personagem:
+  // Formulario usado tanto para cadastrar um novo personagem quanto para editar
+  // nome, raca, classe e foto de um personagem existente.
   function renderCharacterForm() {
     return (
       <View>
@@ -997,7 +1032,9 @@ export default function App() {
     );
   }
 
-  // Modal de criar/editar magia.
+  // Modal Criar/Editar Magia:
+  // Formulario administrativo do catalogo. Permite criar uma magia manualmente
+  // ou editar os campos da magia selecionada.
   function renderSpellForm() {
     return (
       <View>
