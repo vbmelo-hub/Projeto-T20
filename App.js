@@ -495,8 +495,10 @@ export default function App() {
               <View style={styles.addButtonSpacer} />
             )}
             <Pressable onPress={() => setView('characters')} style={styles.navButton}>
-              <SmallFolderGlyph active={view !== 'home'} />
-              <Text style={[styles.navText, view !== 'home' && styles.navActive]}>Personagens</Text>
+              <SmallFolderGlyph active={view === 'characters' || view === 'character'} />
+              <Text style={[styles.navText, (view === 'characters' || view === 'character') && styles.navActive]}>
+                Personagens
+              </Text>
             </Pressable>
           </View>
         ) : null}
