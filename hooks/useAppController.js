@@ -13,6 +13,7 @@ import {
   createEmptyFilters,
   filterAndSortSpells,
 } from '../utils/filters';
+import { compressCharacterPhotoForWeb } from '../utils/images';
 import {
   catalogSpells,
   mergeCatalogWithSavedSpells,
@@ -385,9 +386,12 @@ export default function useAppController() {
       const asset = result.assets[0];
       if (!asset.base64 && !asset.uri) throw new Error('Imagem selecionada sem conteúdo.');
 
-      const photo = asset.base64
-        ? `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`
-        : asset.uri;
+      const photo =
+        Platform.OS === 'web'
+          ? await compressCharacterPhotoForWeb(asset.uri)
+          : asset.base64
+            ? `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`
+            : asset.uri;
 
       setCharacterForm((current) => ({ ...current, photo }));
       showToast('A foto foi selecionada para o personagem.', 'success', 'Foto selecionada');
