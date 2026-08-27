@@ -12,7 +12,12 @@ import {
   createEmptyFilters,
   filterAndSortSpells,
 } from '../utils/filters';
-import { catalogSpells, mergeCatalogWithSavedSpells } from '../utils/spells';
+import {
+  catalogSpells,
+  mergeCatalogWithSavedSpells,
+  sanitizeLinks,
+  splitUpgrades,
+} from '../utils/spells';
 
 export default function useAppController() {
   const [ready, setReady] = useState(false);
@@ -50,11 +55,12 @@ export default function useAppController() {
     loadAppState()
       .then((data) => {
         if (!data) return;
+        const mergedSpells = mergeCatalogWithSavedSpells(data.spells);
         setUsers(data.users ?? []);
         setUser(data.user ?? null);
-        setSpells(mergeCatalogWithSavedSpells(data.spells));
+        setSpells(mergedSpells);
         setCharacters(data.characters ?? []);
-        setLinks(data.links ?? []);
+        setLinks(sanitizeLinks(data.links, mergedSpells));
         setView(data.user ? 'home' : 'login');
       })
       .catch(() => {
@@ -267,10 +273,7 @@ export default function useAppController() {
     const spell = {
       ...spellForm,
       id: selectedSpell?.id ?? String(Date.now()),
-      upgrades: String(spellForm.upgrades)
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
+      upgrades: splitUpgrades(spellForm.upgrades),
     };
     setSpells((current) =>
       selectedSpell
@@ -369,7 +372,9 @@ export default function useAppController() {
 
   function openSpellForm(spell = null) {
     setSelectedSpell(spell);
-    setSpellForm(spell ? { ...spell, upgrades: spell.upgrades.join('\n') } : EMPTY_SPELL);
+    setSpellForm(
+      spell ? { ...spell, upgrades: splitUpgrades(spell.upgrades).join('\n\n') } : EMPTY_SPELL,
+    );
     setModal('spell-form');
   }
 

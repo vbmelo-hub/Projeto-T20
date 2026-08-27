@@ -350,6 +350,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 22,
   },
+  aboutLegalText: {
+    width: '100%',
+    color: '#4d4442',
+    fontSize: 12,
+    lineHeight: 17,
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 12,
+  },
   aboutBackArea: {
     flexGrow: 1,
     width: '100%',

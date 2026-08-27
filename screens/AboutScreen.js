@@ -22,6 +22,12 @@ export default function AboutScreen({ onBack }) {
           <Text style={styles.aboutCreditText}>Projeto desenvolvido por:</Text>
           <Text style={styles.aboutCreditText}>Vinícius Barros de Melo</Text>
         </View>
+        <Text style={styles.aboutLegalText}>
+          Tormenta20 e seus conteúdos são propriedade de seus respectivos titulares, incluindo a
+          Jambô Editora. Este é um projeto acadêmico e fan-made, sem afiliação oficial. Os dados de
+          referência foram compilados a partir dos materiais e das fontes de consulta utilizados no
+          desenvolvimento do projeto.
+        </Text>
         <View style={styles.aboutBackArea}>
           <Pressable
             onPress={onBack}

@@ -21,8 +21,8 @@ export default function SpellDetailsModal({
       <Text style={styles.bodyText}>Alvo/area: {spell.target || 'Nao informado'}</Text>
       <Text style={styles.bodyText}>Resistencia: {spell.resistance || 'Nao informado'}</Text>
       <Text style={styles.description}>{spell.description || 'Sem descricao.'}</Text>
-      {(spell.upgrades ?? []).map((upgrade) => (
-        <Text key={upgrade} style={styles.bodyText}>{upgrade}</Text>
+      {(spell.upgrades ?? []).map((upgrade, index) => (
+        <Text key={`${spell.id}-upgrade-${index}`} style={styles.bodyText}>{upgrade}</Text>
       ))}
       <Text style={styles.bodyText}>Fonte: {spell.source || 'Nao informado'}</Text>
       {characterLink ? (
