@@ -531,8 +531,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 198, 121, 0.64)',
-    backgroundColor: 'rgba(255, 240, 211, 0.94)',
+    borderColor: '#212529',
+    backgroundColor: '#212529',
   },
   filterButton: {
     width: 48,
@@ -541,8 +541,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 198, 121, 0.64)',
-    backgroundColor: 'rgba(255, 240, 211, 0.94)',
+    borderColor: '#212529',
+    backgroundColor: '#212529',
     position: 'relative',
   },
   filterGlyph: {
@@ -555,19 +555,19 @@ const styles = StyleSheet.create({
     width: 22,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.vermelhoPrincipalApp,
+    backgroundColor: '#fafafa',
   },
   filterGlyphMiddle: {
     width: 14,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.vermelhoPrincipalApp,
+    backgroundColor: '#fafafa',
   },
   filterGlyphBottom: {
     width: 7,
     height: 3,
     borderRadius: 2,
-    backgroundColor: colors.vermelhoPrincipalApp,
+    backgroundColor: '#fafafa',
   },
   filterBadge: {
     position: 'absolute',
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   sortText: {
-    color: colors.textoPrincipal,
+    color: '#fafafa',
     fontWeight: '900',
   },
   filterGroup: {
@@ -600,8 +600,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   picker: {
+    width: '100%',
+    maxWidth: '100%',
     minHeight: 44,
     color: colors.textoPrincipal,
+    cursor: 'pointer',
   },
   modalActionRow: {
     flexDirection: 'row',
