@@ -1,8 +1,9 @@
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import styles from '../styles/commonStyles';
+import Toast from './Toast';
 
-export default function ConfirmDialog({ dialog, onClose, onConfirm }) {
+export default function ConfirmDialog({ dialog, onClose, onConfirm, notification, onToastClose }) {
   return (
     <Modal visible={Boolean(dialog)} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.modalLayer}>
@@ -19,6 +20,7 @@ export default function ConfirmDialog({ dialog, onClose, onConfirm }) {
           </View>
         </View>
       </View>
+      <Toast notification={notification} onClose={onToastClose} />
     </Modal>
   );
 }

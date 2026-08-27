@@ -9,6 +9,7 @@ export default function CharacterFormModal({
   form,
   onFieldChange,
   onPickPhoto,
+  pickingPhoto,
   onRequestRemovePhoto,
   onSave,
   onClose,
@@ -33,8 +34,18 @@ export default function CharacterFormModal({
           <Text style={styles.bodyText}>Nenhuma imagem selecionada.</Text>
         )}
         <View style={styles.modalActionRow}>
-          <Pressable onPress={onPickPhoto} style={[styles.secondary, styles.modalActionButton]}>
-            <Text style={styles.secondaryText}>{form.photo ? 'Trocar imagem' : 'Selecionar imagem'}</Text>
+          <Pressable
+            onPress={onPickPhoto}
+            disabled={pickingPhoto}
+            style={[
+              styles.secondary,
+              styles.modalActionButton,
+              pickingPhoto && styles.buttonDisabled,
+            ]}
+          >
+            <Text style={styles.secondaryText}>
+              {pickingPhoto ? 'Abrindo galeria...' : form.photo ? 'Trocar imagem' : 'Selecionar imagem'}
+            </Text>
           </Pressable>
           {form.photo ? (
             <Pressable onPress={onRequestRemovePhoto} style={[styles.ghost, styles.modalActionButton]}>

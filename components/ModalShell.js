@@ -2,7 +2,7 @@ import { KeyboardAvoidingView, Modal, Platform, ScrollView, View } from 'react-n
 
 import styles from '../styles/commonStyles';
 
-export default function ModalShell({ visible, onClose, children }) {
+export default function ModalShell({ visible, onClose, children, overlay }) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.modalLayer}>
@@ -20,6 +20,7 @@ export default function ModalShell({ visible, onClose, children }) {
           </View>
         </KeyboardAvoidingView>
       </View>
+      {overlay}
     </Modal>
   );
 }

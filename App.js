@@ -20,6 +20,13 @@ import styles from './styles/commonStyles';
 
 export default function App() {
   const app = useAppController();
+  const toastHost = app.confirmDialog
+    ? 'confirm'
+    : app.drawerOpen
+      ? 'drawer'
+      : app.modal
+        ? 'modal'
+        : 'root';
 
   if (!app.ready) {
     return (
@@ -63,20 +70,27 @@ export default function App() {
           />
         ) : null}
 
-        <AppModal app={app} />
+        <AppModal app={app} notification={toastHost === 'modal' ? app.toast : null} />
         <ConfirmDialog
           dialog={app.confirmDialog}
           onClose={app.closeConfirmDialog}
           onConfirm={app.confirmDialogAction}
+          notification={toastHost === 'confirm' ? app.toast : null}
+          onToastClose={app.dismissToast}
         />
         <Drawer
           visible={app.drawerOpen}
           onClose={() => app.setDrawerOpen(false)}
           onNavigate={app.goTo}
           onLogout={app.logout}
+          notification={toastHost === 'drawer' ? app.toast : null}
+          onToastClose={app.dismissToast}
         />
       </KeyboardAvoidingView>
-      <Toast notification={app.toast} onClose={app.dismissToast} />
+      <Toast
+        notification={toastHost === 'root' ? app.toast : null}
+        onClose={app.dismissToast}
+      />
     </SafeAreaView>
   );
 }

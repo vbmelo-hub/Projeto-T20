@@ -4,10 +4,15 @@ import FilterModal from './modals/FilterModal';
 import SpellDetailsModal from './modals/SpellDetailsModal';
 import SpellFormModal from './modals/SpellFormModal';
 import ModalShell from './ModalShell';
+import Toast from './Toast';
 
-export default function AppModal({ app }) {
+export default function AppModal({ app, notification }) {
   return (
-    <ModalShell visible={Boolean(app.modal)} onClose={app.closeModal}>
+    <ModalShell
+      visible={Boolean(app.modal)}
+      onClose={app.closeModal}
+      overlay={<Toast notification={notification} onClose={app.dismissToast} />}
+    >
       {app.modal === 'spell' && app.selectedSpell ? (
         <SpellDetailsModal
           spell={app.selectedSpell}
@@ -44,6 +49,7 @@ export default function AppModal({ app }) {
           form={app.characterForm}
           onFieldChange={app.updateCharacterField}
           onPickPhoto={app.pickCharacterPhoto}
+          pickingPhoto={app.pickingCharacterPhoto}
           onRequestRemovePhoto={app.requestRemoveCharacterPhoto}
           onSave={app.saveCharacter}
           onClose={app.closeModal}

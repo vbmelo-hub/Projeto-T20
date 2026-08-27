@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useMemo, useState } from 'react';
+import { Platform } from 'react-native';
 
 import {
   EMPTY_AUTH_FORM,
@@ -40,6 +41,7 @@ export default function useAppController() {
   const [spellForm, setSpellForm] = useState(EMPTY_SPELL);
   const [modal, setModal] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [pickingCharacterPhoto, setPickingCharacterPhoto] = useState(false);
   const [toast, setToast] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
@@ -347,10 +349,32 @@ export default function useAppController() {
   }
 
   async function pickCharacterPhoto() {
+    if (pickingCharacterPhoto) return;
+
+    setPickingCharacterPhoto(true);
     try {
+      if (Platform.OS !== 'web') {
+        let permission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+        if (!permission.granted && permission.canAskAgain) {
+          permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        }
+
+        if (!permission.granted) {
+          showToast(
+            permission.canAskAgain
+              ? 'Autorize o acesso às fotos para selecionar uma imagem.'
+              : 'Ative o acesso às fotos nas configurações do dispositivo.',
+            'warning',
+            'Permissão necessária',
+          );
+          return;
+        }
+      }
+
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        allowsEditing: true,
+        mediaTypes: 'images',
+        allowsEditing: Platform.OS !== 'web',
         aspect: [1, 1],
         quality: 0.7,
         base64: true,
@@ -359,6 +383,8 @@ export default function useAppController() {
       if (result.canceled || !result.assets?.length) return;
 
       const asset = result.assets[0];
+      if (!asset.base64 && !asset.uri) throw new Error('Imagem selecionada sem conteúdo.');
+
       const photo = asset.base64
         ? `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`
         : asset.uri;
@@ -367,6 +393,8 @@ export default function useAppController() {
       showToast('A foto foi selecionada para o personagem.', 'success', 'Foto selecionada');
     } catch {
       showToast('Não foi possível carregar a foto do personagem.', 'error', 'Falha na imagem');
+    } finally {
+      setPickingCharacterPhoto(false);
     }
   }
 
@@ -467,6 +495,7 @@ export default function useAppController() {
     filterOptions,
     availableCharacters,
     drawerOpen,
+    pickingCharacterPhoto,
     toast,
     confirmDialog,
     setQuery,

@@ -1,8 +1,9 @@
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import styles from '../styles/commonStyles';
+import Toast from './Toast';
 
-export default function Drawer({ visible, onClose, onNavigate, onLogout }) {
+export default function Drawer({ visible, onClose, onNavigate, onLogout, notification, onToastClose }) {
   if (!visible) return null;
 
   return (
@@ -27,6 +28,7 @@ export default function Drawer({ visible, onClose, onNavigate, onLogout }) {
           </Pressable>
         </View>
       </Pressable>
+      <Toast notification={notification} onClose={onToastClose} />
     </Modal>
   );
 }

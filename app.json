@@ -5,6 +5,14 @@
     "sdkVersion": "54.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permita que o Grimorio 20 acesse suas fotos para definir a imagem do personagem."
+        }
+      ]
+    ],
     "experiments": {
       "baseUrl": "/Projeto-T20"
     }
