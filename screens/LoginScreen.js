@@ -10,9 +10,9 @@ export default function LoginScreen({ authMode, form, onFieldChange, onSubmit, o
     <Surface style={styles.authCard}>
       <Logo />
       <Text style={styles.title}>{authMode === 'login' ? 'Entrar' : 'Cadastro'}</Text>
-      <Field label="Email" value={form.email} onChangeText={(value) => onFieldChange('email', value)} />
+      <Field label="Email *" value={form.email} onChangeText={(value) => onFieldChange('email', value)} />
       <Field
-        label="Senha"
+        label="Senha *"
         value={form.password}
         secureTextEntry
         onChangeText={(value) => onFieldChange('password', value)}

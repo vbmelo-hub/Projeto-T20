@@ -8,4 +8,12 @@ export const colors = {
   vermelhoEscuroApp: '#7d2f32',
   vermelhoAcaoPerigosa: '#b74146',
   fundoContadorFiltros: '#8b5a1f',
+  sucesso: '#2f7d4a',
+  fundoSucesso: '#edf8f0',
+  erro: '#b74146',
+  fundoErro: '#fff0f0',
+  aviso: '#8b5a1f',
+  fundoAviso: '#fff5df',
+  informacao: '#315f83',
+  fundoInformacao: '#edf5fb',
 };

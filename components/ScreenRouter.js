@@ -63,7 +63,7 @@ export default function ScreenRouter({ app }) {
     );
   }
 
-  if (app.view === 'about') return <AboutScreen />;
+  if (app.view === 'about') return <AboutScreen onBack={app.goBackFromAbout} />;
 
   return null;
 }

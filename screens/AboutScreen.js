@@ -1,8 +1,8 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import styles from '../styles/commonStyles';
 
-export default function AboutScreen() {
+export default function AboutScreen({ onBack }) {
   return (
     <View style={styles.aboutPaper}>
       <View style={styles.aboutTint} />
@@ -21,6 +21,16 @@ export default function AboutScreen() {
         <View style={styles.aboutCredits}>
           <Text style={styles.aboutCreditText}>Projeto desenvolvido por:</Text>
           <Text style={styles.aboutCreditText}>Vinícius Barros de Melo</Text>
+        </View>
+        <View style={styles.aboutBackArea}>
+          <Pressable
+            onPress={onBack}
+            style={({ pressed }) => [styles.aboutBackButton, pressed && styles.aboutBackButtonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar para a tela anterior"
+          >
+            <Text style={styles.aboutBackButtonText}>Voltar</Text>
+          </Pressable>
         </View>
       </View>
     </View>

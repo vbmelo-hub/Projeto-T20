@@ -1,6 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 
 import {
   EMPTY_AUTH_FORM,
@@ -18,6 +17,7 @@ import { catalogSpells, mergeCatalogWithSavedSpells } from '../utils/spells';
 export default function useAppController() {
   const [ready, setReady] = useState(false);
   const [view, setView] = useState('login');
+  const [viewBeforeAbout, setViewBeforeAbout] = useState('home');
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [spells, setSpells] = useState(catalogSpells);
@@ -35,8 +35,16 @@ export default function useAppController() {
   const [spellForm, setSpellForm] = useState(EMPTY_SPELL);
   const [modal, setModal] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
+
+  function showToast(message, type = 'success', title) {
+    setToast({ id: Date.now(), message, type, title });
+  }
+
+  function dismissToast() {
+    setToast(null);
+  }
 
   useEffect(() => {
     loadAppState()
@@ -49,17 +57,23 @@ export default function useAppController() {
         setLinks(data.links ?? []);
         setView(data.user ? 'home' : 'login');
       })
+      .catch(() => {
+        showToast('Não foi possível carregar os dados salvos.', 'error');
+      })
       .finally(() => setReady(true));
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    saveAppState({ users, user, spells, characters, links });
+    saveAppState({ users, user, spells, characters, links }).catch(() => {
+      showToast('Não foi possível salvar as alterações neste dispositivo.', 'error');
+    });
   }, [ready, users, user, spells, characters, links]);
 
   useEffect(() => {
     if (!toast) return undefined;
-    const timeout = setTimeout(() => setToast(''), 2600);
+    const duration = toast.type === 'error' || toast.type === 'warning' ? 4200 : 2800;
+    const timeout = setTimeout(dismissToast, duration);
     return () => clearTimeout(timeout);
   }, [toast]);
 
@@ -136,7 +150,7 @@ export default function useAppController() {
   function submitFilters() {
     setFilters(draftFilters);
     setModal('');
-    setToast('Filtros aplicados.');
+    showToast('Filtros aplicados.', 'success');
   }
 
   function clearFilters() {
@@ -144,7 +158,7 @@ export default function useAppController() {
     setFilters(emptyFilters);
     setDraftFilters(emptyFilters);
     setModal('');
-    setToast('Filtros limpos.');
+    showToast('Filtros limpos.', 'info');
   }
 
   function openPickerForSpell(spell) {
@@ -153,7 +167,15 @@ export default function useAppController() {
   }
 
   function goTo(nextView) {
+    if (nextView === 'about' && view !== 'about') {
+      setViewBeforeAbout(view);
+    }
     setView(nextView);
+    setDrawerOpen(false);
+  }
+
+  function goBackFromAbout() {
+    setView(viewBeforeAbout === 'about' ? 'home' : viewBeforeAbout);
     setDrawerOpen(false);
   }
 
@@ -163,31 +185,36 @@ export default function useAppController() {
     const username = authForm.username.trim();
 
     if (!email || !password || (authMode === 'register' && !username)) {
-      Alert.alert('Campos obrigatorios', 'Preencha email, senha e nome de usuario.');
+      showToast('Preencha os campos obrigatórios para continuar.', 'warning');
       return;
     }
 
     if (authMode === 'register') {
       if (users.some((item) => item.email === email)) {
-        Alert.alert('Email ja cadastrado', 'Use outro email ou faca login.');
+        showToast('Este email já possui uma conta. Faça login ou use outro email.', 'warning', 'Email já cadastrado');
         return;
       }
       const nextUser = { id: String(Date.now()), email, password, username };
       setUsers((current) => [...current, nextUser]);
       setUser(nextUser);
       setView('welcome');
-      setToast('Conta criada.');
+      showToast('Sua conta foi criada com sucesso.', 'success', 'Conta criada');
       return;
     }
 
-    const found = users.find((item) => item.email === email && item.password === password);
-    if (!found) {
-      Alert.alert('Login invalido', 'Email ou senha incorretos.');
+    const account = users.find((item) => item.email === email);
+    if (!account) {
+      showToast('Não encontramos uma conta com este email.', 'error', 'Conta não encontrada');
       return;
     }
-    setUser(found);
+
+    if (account.password !== password) {
+      showToast('A senha informada está incorreta.', 'error', 'Senha incorreta');
+      return;
+    }
+    setUser(account);
     setView('home');
-    setToast('Login realizado.');
+    showToast(`Bem-vindo, ${account.username}!`, 'success', 'Login realizado');
   }
 
   function logout() {
@@ -196,11 +223,12 @@ export default function useAppController() {
     setSelectedSpell(null);
     setDrawerOpen(false);
     setView('login');
+    showToast('Você saiu da sua conta.', 'info', 'Sessão encerrada');
   }
 
   function saveCharacter() {
     if (!characterForm.name.trim()) {
-      Alert.alert('Nome obrigatorio', 'Informe o nome do personagem.');
+      showToast('Informe o nome do personagem antes de salvar.', 'warning', 'Nome obrigatório');
       return;
     }
     const character = {
@@ -217,19 +245,23 @@ export default function useAppController() {
     setSelectedCharacter(character);
     closeModal();
     setView('characters');
-    setToast(selectedCharacter ? 'Personagem atualizado.' : 'Personagem criado.');
+    showToast(
+      selectedCharacter ? 'As informações do personagem foram atualizadas.' : 'O personagem foi criado com sucesso.',
+      'success',
+      selectedCharacter ? 'Personagem atualizado' : 'Personagem criado',
+    );
   }
 
   function deleteCharacter(character) {
     setCharacters((current) => current.filter((item) => item.id !== character.id));
     setLinks((current) => current.filter((item) => item.characterId !== character.id));
     if (selectedCharacter?.id === character.id) setSelectedCharacter(null);
-    setToast('Personagem excluido.');
+    showToast('O personagem e seus vínculos foram excluídos.', 'success', 'Personagem excluído');
   }
 
   function saveSpell() {
     if (!spellForm.name.trim()) {
-      Alert.alert('Nome obrigatorio', 'Informe o nome da magia.');
+      showToast('Informe o nome da magia antes de salvar.', 'warning', 'Nome obrigatório');
       return;
     }
     const spell = {
@@ -246,17 +278,21 @@ export default function useAppController() {
         : [...current, spell],
     );
     closeModal();
-    setToast(selectedSpell ? 'Magia atualizada.' : 'Magia cadastrada.');
+    showToast(
+      selectedSpell ? 'As informações da magia foram atualizadas.' : 'A magia foi cadastrada com sucesso.',
+      'success',
+      selectedSpell ? 'Magia atualizada' : 'Magia cadastrada',
+    );
   }
 
   function linkSpellToCharacter(characterId, spellId) {
     if (links.some((link) => link.characterId === characterId && link.spellId === spellId)) {
-      Alert.alert('Magia ja vinculada', 'Este personagem ja possui essa magia.');
+      showToast('Este personagem já possui essa magia.', 'warning', 'Magia já adicionada');
       return;
     }
     setLinks((current) => [...current, { characterId, spellId, prepared: false }]);
     closeModal();
-    setToast('Magia adicionada ao personagem.');
+    showToast('A magia foi adicionada ao personagem.', 'success', 'Magia adicionada');
   }
 
   function togglePrepared(spellId) {
@@ -270,7 +306,11 @@ export default function useAppController() {
           : link,
       ),
     );
-    setToast(currentLink?.prepared ? 'Magia despreparada.' : 'Magia preparada.');
+    showToast(
+      currentLink?.prepared ? 'A magia não está mais preparada.' : 'A magia foi marcada como preparada.',
+      'success',
+      currentLink?.prepared ? 'Magia despreparada' : 'Magia preparada',
+    );
   }
 
   function removeSpellFromCharacter(spellId) {
@@ -280,7 +320,7 @@ export default function useAppController() {
           !(link.characterId === selectedCharacter.id && link.spellId === spellId),
       ),
     );
-    setToast('Magia removida do personagem.');
+    showToast('A magia foi removida do personagem.', 'success', 'Magia removida');
   }
 
   function openConfirmDialog({ title, message, confirmLabel = 'Excluir', onConfirm }) {
@@ -321,8 +361,9 @@ export default function useAppController() {
         : asset.uri;
 
       setCharacterForm((current) => ({ ...current, photo }));
-    } catch (error) {
-      Alert.alert('Falha ao selecionar imagem', 'Nao foi possivel carregar a foto do personagem.');
+      showToast('A foto foi selecionada para o personagem.', 'success', 'Foto selecionada');
+    } catch {
+      showToast('Não foi possível carregar a foto do personagem.', 'error', 'Falha na imagem');
     }
   }
 
@@ -391,7 +432,10 @@ export default function useAppController() {
       title: 'Remover foto',
       message: 'Deseja remover a foto selecionada deste personagem?',
       confirmLabel: 'Remover',
-      onConfirm: () => setCharacterForm((current) => ({ ...current, photo: '' })),
+      onConfirm: () => {
+        setCharacterForm((current) => ({ ...current, photo: '' }));
+        showToast('A foto foi removida do formulário.', 'info', 'Foto removida');
+      },
     });
   }
 
@@ -424,13 +468,14 @@ export default function useAppController() {
     setSortAsc,
     setView,
     setDrawerOpen,
-    setToast,
+    dismissToast,
     applyFilter,
     openFilters,
     submitFilters,
     clearFilters,
     openPickerForSpell,
     goTo,
+    goBackFromAbout,
     submitAuth,
     logout,
     saveCharacter,

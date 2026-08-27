@@ -75,8 +75,8 @@ export default function App() {
           onNavigate={app.goTo}
           onLogout={app.logout}
         />
-        <Toast message={app.toast} onClose={() => app.setToast('')} />
       </KeyboardAvoidingView>
+      <Toast notification={app.toast} onClose={app.dismissToast} />
     </SafeAreaView>
   );
 }

@@ -16,7 +16,7 @@ export default function CharacterFormModal({
   return (
     <View>
       <ModalHeader title={editing ? 'Editar personagem' : 'Criar personagem'} onClose={onClose} />
-      <Field label="Nome" value={form.name} onChangeText={(value) => onFieldChange('name', value)} />
+      <Field label="Nome*" value={form.name} onChangeText={(value) => onFieldChange('name', value)} />
       <Field label="Raca" value={form.race} onChangeText={(value) => onFieldChange('race', value)} />
       <Field
         label="Classe"

@@ -1,13 +1,45 @@
-import { Pressable, Text } from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
 
 import styles from '../styles/commonStyles';
 
-export default function Toast({ message, onClose }) {
-  if (!message) return null;
+const toastConfig = {
+  success: { icon: '✓', title: 'Tudo certo', style: 'toastSuccess', iconStyle: 'toastIconSuccess' },
+  error: { icon: '!', title: 'Algo deu errado', style: 'toastError', iconStyle: 'toastIconError' },
+  warning: { icon: '!', title: 'Atenção', style: 'toastWarning', iconStyle: 'toastIconWarning' },
+  info: { icon: 'i', title: 'Informação', style: 'toastInfo', iconStyle: 'toastIconInfo' },
+};
+
+export default function Toast({ notification, onClose }) {
+  if (!notification?.message) return null;
+
+  const config = toastConfig[notification.type] ?? toastConfig.info;
 
   return (
-    <Pressable onPress={onClose} style={styles.toast}>
-      <Text style={styles.toastText}>{message}</Text>
-    </Pressable>
+    <Modal
+      visible
+      transparent
+      animationType="fade"
+      presentationStyle="overFullScreen"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View style={styles.toastLayer} pointerEvents="box-none">
+        <Pressable
+          onPress={onClose}
+          style={[styles.toast, styles[config.style]]}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+        >
+          <View style={styles.toastContent}>
+            <Text style={[styles.toastIcon, styles[config.iconStyle]]}>{config.icon}</Text>
+            <View style={styles.toastMessage}>
+              <Text style={styles.toastTitle}>{notification.title ?? config.title}</Text>
+              <Text style={styles.toastText}>{notification.message}</Text>
+            </View>
+            <Text style={styles.toastClose}>×</Text>
+          </View>
+        </Pressable>
+      </View>
+    </Modal>
   );
 }

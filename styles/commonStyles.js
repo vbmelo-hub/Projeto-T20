@@ -313,6 +313,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(246, 228, 196, 0.42)',
   },
   aboutPanel: {
+    flex: 1,
     minHeight: 632,
     paddingTop: 0,
     paddingHorizontal: 2,
@@ -348,6 +349,37 @@ const styles = StyleSheet.create({
     fontFamily: Platform.select({ ios: 'Times New Roman', android: 'serif', default: 'serif' }),
     fontSize: 20,
     lineHeight: 22,
+  },
+  aboutBackArea: {
+    flexGrow: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingTop: 12,
+  },
+  aboutBackButton: {
+    minWidth: 180,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 28,
+    paddingVertical: 13,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.linhaDivisoria,
+    backgroundColor: colors.vermelhoPrincipalApp,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  },
+  aboutBackButtonText: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  aboutBackButtonPressed: {
+    opacity: 0.82,
   },
   description: {
     color: colors.textoPrincipal,
@@ -1057,8 +1089,15 @@ const styles = StyleSheet.create({
     marginTop: 14,
     backgroundColor: colors.vermelhoEscuroApp,
   },
+  toastLayer: {
+    flex: 1,
+    position: 'relative',
+    zIndex: 100000,
+    elevation: 100000,
+  },
   toast: {
     position: 'absolute',
+    zIndex: 100000,
     left: 16,
     right: 16,
     bottom: 74,
@@ -1072,13 +1111,71 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.28,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 100000,
+  },
+  toastSuccess: {
+    borderColor: colors.sucesso,
+    backgroundColor: colors.fundoSucesso,
+  },
+  toastError: {
+    borderColor: colors.erro,
+    backgroundColor: colors.fundoErro,
+  },
+  toastWarning: {
+    borderColor: colors.aviso,
+    backgroundColor: colors.fundoAviso,
+  },
+  toastInfo: {
+    borderColor: colors.informacao,
+    backgroundColor: colors.fundoInformacao,
+  },
+  toastContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  toastIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '900',
+    lineHeight: 24,
+    textAlign: 'center',
+    backgroundColor: colors.informacao,
+  },
+  toastIconSuccess: {
+    backgroundColor: colors.sucesso,
+  },
+  toastIconError: {
+    backgroundColor: colors.erro,
+  },
+  toastIconWarning: {
+    backgroundColor: colors.aviso,
+  },
+  toastIconInfo: {
+    backgroundColor: colors.informacao,
+  },
+  toastMessage: {
+    flex: 1,
+  },
+  toastTitle: {
+    color: colors.textoPrincipal,
+    fontSize: 13,
+    fontWeight: '900',
+    marginBottom: 2,
   },
   toastText: {
     color: colors.textoPrincipal,
     fontSize: 14,
+    fontWeight: '600',
+  },
+  toastClose: {
+    color: colors.textoSecundario,
+    fontSize: 20,
     fontWeight: '900',
-    textAlign: 'center',
+    paddingHorizontal: 4,
   },
 });
 
