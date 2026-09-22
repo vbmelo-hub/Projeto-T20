@@ -229,6 +229,18 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 4,
   },
+  upgradeText: {
+    color: '#4a211b',
+    fontSize: typography.size.md,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  upgradeCost: {
+    fontWeight: '900',
+  },
+  spellSource: {
+    marginTop: 4,
+  },
   welcomePaper: {
     minHeight: '100%',
     width: '100%',

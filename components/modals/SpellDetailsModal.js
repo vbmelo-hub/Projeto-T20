@@ -1,7 +1,23 @@
 import { Pressable, Text, View } from 'react-native';
 
 import styles from '../../styles/commonStyles';
+import { splitUpgrades } from '../../utils/spells';
 import ModalHeader from '../ModalHeader';
+
+function UpgradeText({ spellId, text, index }) {
+  const cost = text.match(/^(\+\d+\s*PM(?:\s*\([^:\n]*\)?)?\s*:)([\s\S]*)$/i);
+
+  return (
+    <Text key={`${spellId}-upgrade-${index}`} style={styles.upgradeText}>
+      {cost ? (
+        <>
+          <Text style={styles.upgradeCost}>{cost[1]}</Text>
+          {cost[2]}
+        </>
+      ) : text}
+    </Text>
+  );
+}
 
 export default function SpellDetailsModal({
   spell,
@@ -11,6 +27,8 @@ export default function SpellDetailsModal({
   onEdit,
   onClose,
 }) {
+  const upgrades = splitUpgrades(spell.upgrades);
+
   return (
     <View>
       <ModalHeader title={spell.name} onClose={onClose} />
@@ -21,10 +39,15 @@ export default function SpellDetailsModal({
       <Text style={styles.bodyText}>Alvo/area: {spell.target || 'Nao informado'}</Text>
       <Text style={styles.bodyText}>Resistencia: {spell.resistance || 'Nao informado'}</Text>
       <Text style={styles.description}>{spell.description || 'Sem descricao.'}</Text>
-      {(spell.upgrades ?? []).map((upgrade, index) => (
-        <Text key={`${spell.id}-upgrade-${index}`} style={styles.bodyText}>{upgrade}</Text>
+      {upgrades.map((upgrade, index) => (
+        <UpgradeText
+          key={`${spell.id}-upgrade-${index}`}
+          spellId={spell.id}
+          text={upgrade}
+          index={index}
+        />
       ))}
-      <Text style={styles.bodyText}>Fonte: {spell.source || 'Nao informado'}</Text>
+      <Text style={[styles.bodyText, styles.spellSource]}>Fonte: {spell.source || 'Nao informado'}</Text>
       {characterLink ? (
         <Pressable onPress={() => onTogglePrepared(spell.id)} style={styles.primary}>
           <Text style={styles.primaryText}>

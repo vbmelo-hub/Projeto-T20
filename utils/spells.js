@@ -8,10 +8,21 @@ export function splitLines(value) {
     .filter(Boolean);
 }
 
+function normalizeUpgradeText(value) {
+  return String(value)
+    .replace(/(?:&#x20;|&#32;|&nbsp;)/gi, ' ')
+    .replace(/\r\n?/g, '\n')
+    .trim()
+    .replace(
+      /^((?:Truque|\+\d+\s*PM)(?:\s*\([^:\n]*\)?)?\s*:)[\t ]*(?:\n[\t ]*)+/i,
+      '$1  ',
+    );
+}
+
 export function splitUpgrades(value) {
   if (Array.isArray(value)) {
     return value
-      .map((item) => String(item).replace(/\r\n?/g, '\n').trim())
+      .map(normalizeUpgradeText)
       .filter(Boolean);
   }
 
@@ -29,7 +40,9 @@ export function splitUpgrades(value) {
 
   headers.forEach((header, index) => {
     const nextHeader = headers[index + 1];
-    const block = text.slice(header.index, nextHeader?.index ?? text.length).trim();
+    const block = normalizeUpgradeText(
+      text.slice(header.index, nextHeader?.index ?? text.length),
+    );
     if (block) blocks.push(block);
   });
 
