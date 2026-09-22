@@ -994,7 +994,7 @@ export default function App() {
     return (
       <View>
         <ModalHeader title={selectedCharacter ? 'Editar personagem' : 'Criar personagem'} />
-        <Field label="Nome" value={characterForm.name} onChangeText={(name) => setCharacterForm({ ...characterForm, name })} />
+        <Field label="Nome *(campo obrigatório)" value={characterForm.name} onChangeText={(name) => setCharacterForm({ ...characterForm, name })} />
         <Field label="Raca" value={characterForm.race} onChangeText={(race) => setCharacterForm({ ...characterForm, race })} />
         <Field label="Classe" value={characterForm.characterClass} onChangeText={(characterClass) => setCharacterForm({ ...characterForm, characterClass })} />
         <View style={styles.field}>
