@@ -1,0 +1,1711 @@
+{
+  "total_importado": 275,
+  "magias_existentes_atualizadas": 90,
+  "magias_novas": 185,
+  "magias_antigas_removidas_total": 19,
+  "magias_antigas_removidas": [
+    "Detectar Magia",
+    "Faíscas",
+    "Seta Infalível",
+    "Aterrorizar",
+    "Barreira de Energia",
+    "Cone de Frio",
+    "Conhecimento Divino",
+    "Convocar Relâmpagos",
+    "Curar Ferimentos em Massa",
+    "Domínio Animal",
+    "Espada Justiceira",
+    "Falar com Animais",
+    "Forma Gasosa",
+    "Lendas e Histórias",
+    "Muralha de Pedra",
+    "Porta Dimensional",
+    "Restauração",
+    "Ressurreição",
+    "Telepatia"
+  ],
+  "magias_antigas_removidas_com_ids": [
+    {
+      "id": 22,
+      "nome": "Detectar Magia"
+    },
+    {
+      "id": 27,
+      "nome": "Faíscas"
+    },
+    {
+      "id": 40,
+      "nome": "Seta Infalível"
+    },
+    {
+      "id": 49,
+      "nome": "Aterrorizar"
+    },
+    {
+      "id": 51,
+      "nome": "Barreira de Energia"
+    },
+    {
+      "id": 56,
+      "nome": "Cone de Frio"
+    },
+    {
+      "id": 57,
+      "nome": "Conhecimento Divino"
+    },
+    {
+      "id": 62,
+      "nome": "Convocar Relâmpagos"
+    },
+    {
+      "id": 63,
+      "nome": "Curar Ferimentos em Massa"
+    },
+    {
+      "id": 66,
+      "nome": "Domínio Animal"
+    },
+    {
+      "id": 70,
+      "nome": "Espada Justiceira"
+    },
+    {
+      "id": 71,
+      "nome": "Falar com Animais"
+    },
+    {
+      "id": 76,
+      "nome": "Forma Gasosa"
+    },
+    {
+      "id": 81,
+      "nome": "Lendas e Histórias"
+    },
+    {
+      "id": 90,
+      "nome": "Muralha de Pedra"
+    },
+    {
+      "id": 93,
+      "nome": "Porta Dimensional"
+    },
+    {
+      "id": 97,
+      "nome": "Restauração"
+    },
+    {
+      "id": 98,
+      "nome": "Ressurreição"
+    },
+    {
+      "id": 104,
+      "nome": "Telepatia"
+    }
+  ],
+  "total_final": 275,
+  "artefatos_confirmDelete_removidos": 199,
+  "registros_com_artefatos_removidos": [
+    "Abençoar Alimentos",
+    "Acalmar Animal",
+    "Açoite Flamejante",
+    "Adaga Mental",
+    "Alarme",
+    "Aliado Animal",
+    "Alterar Destino",
+    "Alterar Memória",
+    "Alterar Tamanho",
+    "Amarras Etéreas",
+    "Amedrontar",
+    "Âncora Dimensional",
+    "Animar Objetos",
+    "Anular a Luz",
+    "Aparência Perfeita",
+    "Aprisionamento",
+    "Área Escorregadia",
+    "Arma de Jade",
+    "Arma Espiritual",
+    "Arma Mágica",
+    "Armadura Arcana",
+    "Armadura Elemental",
+    "Armadura Gélida",
+    "Armamento da Natureza",
+    "Arsenal de Allihanna",
+    "Assassino Fantasmagórico",
+    "Assobio Perigoso",
+    "Augúrio",
+    "Aura de Morte",
+    "Aura Divina",
+    "Aura Restauradora",
+    "Aviso",
+    "Banimento",
+    "Barragem Elemental de Vectorius",
+    "Bênção",
+    "Bênção da Dragoa Rainha",
+    "Bofetada de Nimb",
+    "Bola de Fogo",
+    "Buraco Negro",
+    "Caminhos da Natureza",
+    "Campo Antimagia",
+    "Campo de Força",
+    "Camuflagem Ilusória",
+    "Chuva",
+    "Chuva de Meteoros",
+    "Círculo da Justiça",
+    "Círculo da Restauração",
+    "Cólera de Azgher",
+    "Coluna de Chamas",
+    "Comando",
+    "Compreensão",
+    "Comunhão com a Natureza",
+    "Conceder Milagre",
+    "Concentração de Combate",
+    "Condição",
+    "Conjurar Armadilha",
+    "Conjurar Elemental",
+    "Conjurar Mortos-Vivos",
+    "Consagrar",
+    "Contato Extraplanar",
+    "Controlar a Gravidade",
+    "Controlar Água",
+    "Controlar Ar",
+    "Controlar Fogo",
+    "Controlar Madeira",
+    "Controlar o Clima",
+    "Controlar o Tempo",
+    "Controlar Plantas",
+    "Controlar Terra",
+    "Coração Imortal",
+    "Couraça de Allihanna",
+    "Dardo Gélido",
+    "Deflagração de Mana",
+    "Desafio Corajoso",
+    "Descobrir Fraqueza",
+    "Desejo",
+    "Desfazer Engenhoca",
+    "Desintegrar",
+    "Despedaçar",
+    "Detonação Congelante",
+    "Discrição",
+    "Disparo Gélido",
+    "Distração Fugaz",
+    "Emular Magia",
+    "Enfeitiçar",
+    "Erupção Glacial",
+    "Escapatória de Hyninn",
+    "Esculpir Sons",
+    "Escuridão",
+    "Espírito Balístico",
+    "Euforia de Valkaria",
+    "Execução de Thwor",
+    "Explosão de Chamas",
+    "Farejar Fortuna",
+    "Ferver Sangue",
+    "Flecha Ácida",
+    "Flecha de Luz",
+    "Frescor de Lena",
+    "Fúria dos Antepassados",
+    "Futuro Melhor",
+    "Geiser Cáustico",
+    "Globo da Verdade de Gwen",
+    "Hálito Peçonhento",
+    "Heroísmo",
+    "Hipnotismo",
+    "Imobilizar",
+    "Impacto Fulminante",
+    "Infligir Ferimentos",
+    "Infortúnio de Sszzaas",
+    "Instante Estoico",
+    "Invisibilidade",
+    "Invocar Fagulha Elemental",
+    "Invulnerabilidade",
+    "Jato Corrosivo",
+    "Katana Celestial",
+    "Lança Ígnea de Aleph",
+    "Legião",
+    "Libertação",
+    "Ligação Sombria",
+    "Localização",
+    "Luz",
+    "Maaais Klunc",
+    "Magia Dadivosa",
+    "Mapear",
+    "Máquina de Combate",
+    "Marionete",
+    "Mata-Dragão",
+    "Metamorfose",
+    "Miasma Mefítico",
+    "Miragem",
+    "Momento de Tormenta",
+    "Muralha Elemental",
+    "Necrofogo",
+    "Névoa",
+    "Nuvem Tempestuosa",
+    "Oração",
+    "Orbe do Oceano",
+    "Orientação",
+    "Ossos de Adamante",
+    "Paixão de Marah",
+    "Pântano Vitriólico",
+    "Percepção Rubra",
+    "Perdição",
+    "Perturbação Sombria",
+    "Piscar",
+    "Poção Explosiva",
+    "Poder de Kallyadranoch",
+    "Posse de Arsenal",
+    "Possessão",
+    "Premonição",
+    "Preparação de Batalha",
+    "Profanar",
+    "Proteção de Tauron",
+    "Punho de Mitral",
+    "Punição do Profano",
+    "Purificação",
+    "Raio de Plasma",
+    "Raio do Enfraquecimento",
+    "Raio Polar",
+    "Raio Solar",
+    "Refúgio",
+    "Relâmpago",
+    "Relâmpago Flamejante de Reynard",
+    "Réquiem",
+    "Rogar Maldição",
+    "Roubar a Alma",
+    "Santuário",
+    "Selo de Mana",
+    "Semiplano",
+    "Sigilo de Sszzaas",
+    "Silêncio",
+    "Siroco de Azgher",
+    "Soco de Arsenal",
+    "Sonho",
+    "Sono",
+    "Sopro das Uivantes",
+    "Sorriso da Fortuna",
+    "Sussurros Insanos",
+    "Teia",
+    "Telecinesia",
+    "Teletransporte",
+    "Terremoto",
+    "Toque Álgido",
+    "Toque Chocante",
+    "Toque Congelante",
+    "Toque de Megalokk",
+    "Toque do Horizonte",
+    "Traição da Lâmina",
+    "Traição Mágica",
+    "Tranquilidade",
+    "Transformação em Dragão",
+    "Transposição",
+    "Velocidade",
+    "Velocidade do Relâmpago",
+    "Ventania Mística",
+    "Viagem Onírica",
+    "Vidência",
+    "Voo",
+    "Voz da Razão"
+  ],
+  "descricoes_vazias": [
+    "Conjurar Monstro",
+    "Convocação Instantânea",
+    "Crânio Voador de Vladislav",
+    "Criar Elementos",
+    "Criar Ilusão",
+    "Cúpula de Repulsão",
+    "Curar Ferimentos",
+    "Desespero Esmagador",
+    "Despertar Consciência",
+    "Detectar Ameaças",
+    "Dificultar Detecção",
+    "Disfarce Ilusório",
+    "Dispersar as Trevas",
+    "Dissipar Magia",
+    "Duplicata Ilusória",
+    "Engenho de Mana",
+    "Enxame de Pestes",
+    "Enxame Rubro de Ichabod",
+    "Escudo da Fé",
+    "Explosão Caleidoscópica",
+    "Físico Divino",
+    "Forma Etérea",
+    "Fúria do Panteão",
+    "Globo de Invulnerabilidade",
+    "Guardião Divino",
+    "Ilusão Lacerante",
+    "Imagem Espelhada",
+    "Intervenção Divina",
+    "Lágrimas de Wynna",
+    "Lendas & Histórias",
+    "Leque Cromático",
+    "Ligação Telepática",
+    "Manto de Sombras",
+    "Manto do Cruzado",
+    "Mão Poderosa de Talude",
+    "Marca da Obediência",
+    "Mente Divina",
+    "Missão Divina",
+    "Montaria Arcana",
+    "Muralha de Ossos",
+    "Palavra Primordial",
+    "Pele de Pedra",
+    "Poeira da Podridão",
+    "Potência Divina",
+    "Primor Atlético",
+    "Projetar Consciência",
+    "Proteção Contra Magia",
+    "Proteção Divina",
+    "Queda Suave",
+    "Reanimação Impura",
+    "Resistência a Energia",
+    "Runa de Proteção",
+    "Salto Dimensional",
+    "Segunda Chance",
+    "Servo Divino",
+    "Servo Morto-Vivo",
+    "Servos Invisíveis",
+    "Seta Infalível de Talude",
+    "Sombra Assassina",
+    "Sopro da Salvação",
+    "Suporte Ambiental",
+    "Talho Invisível de Edauros",
+    "Tempestade Divina",
+    "Tentáculos de Trevas",
+    "Toque da Morte",
+    "Toque Vampírico",
+    "Tranca Arcana",
+    "Transformação de Guerra",
+    "Transmutar Objetos",
+    "Vestimenta da Fé",
+    "Viagem Arbórea",
+    "Viagem Planar",
+    "Visão da Verdade",
+    "Visão Mística",
+    "Vitalidade Fantasma",
+    "Voz Divina"
+  ],
+  "aprimoramentos_vazios": [
+    "Alterar Destino",
+    "Aprisionamento",
+    "Assassino Fantasmagórico",
+    "Assobio Perigoso",
+    "Bênção da Dragoa Rainha",
+    "Campo Antimagia",
+    "Conjurar Monstro",
+    "Controlar a Gravidade",
+    "Controlar o Clima",
+    "Controlar o Tempo",
+    "Convocação Instantânea",
+    "Crânio Voador de Vladislav",
+    "Criar Elementos",
+    "Criar Ilusão",
+    "Cúpula de Repulsão",
+    "Curar Ferimentos",
+    "Desejo",
+    "Desespero Esmagador",
+    "Despertar Consciência",
+    "Detectar Ameaças",
+    "Dificultar Detecção",
+    "Disfarce Ilusório",
+    "Dispersar as Trevas",
+    "Dissipar Magia",
+    "Duplicata Ilusória",
+    "Engenho de Mana",
+    "Enxame de Pestes",
+    "Enxame Rubro de Ichabod",
+    "Escudo da Fé",
+    "Explosão Caleidoscópica",
+    "Físico Divino",
+    "Forma Etérea",
+    "Fúria do Panteão",
+    "Globo de Invulnerabilidade",
+    "Guardião Divino",
+    "Ilusão Lacerante",
+    "Imagem Espelhada",
+    "Intervenção Divina",
+    "Lágrimas de Wynna",
+    "Lendas & Histórias",
+    "Leque Cromático",
+    "Ligação Telepática",
+    "Manto de Sombras",
+    "Manto do Cruzado",
+    "Mão Poderosa de Talude",
+    "Marca da Obediência",
+    "Marionete",
+    "Mente Divina",
+    "Missão Divina",
+    "Montaria Arcana",
+    "Muralha de Ossos",
+    "Palavra Primordial",
+    "Pele de Pedra",
+    "Poeira da Podridão",
+    "Posse de Arsenal",
+    "Potência Divina",
+    "Primor Atlético",
+    "Projetar Consciência",
+    "Proteção Contra Magia",
+    "Proteção Divina",
+    "Queda Suave",
+    "Reanimação Impura",
+    "Réquiem",
+    "Resistência a Energia",
+    "Runa de Proteção",
+    "Salto Dimensional",
+    "Segunda Chance",
+    "Servo Divino",
+    "Servo Morto-Vivo",
+    "Servos Invisíveis",
+    "Seta Infalível de Talude",
+    "Sombra Assassina",
+    "Sopro da Salvação",
+    "Suporte Ambiental",
+    "Talho Invisível de Edauros",
+    "Tempestade Divina",
+    "Tentáculos de Trevas",
+    "Terremoto",
+    "Toque da Morte",
+    "Toque Vampírico",
+    "Tranca Arcana",
+    "Transformação de Guerra",
+    "Transmutar Objetos",
+    "Ventania Mística",
+    "Vestimenta da Fé",
+    "Viagem Arbórea",
+    "Viagem Planar",
+    "Vidência",
+    "Visão da Verdade",
+    "Visão Mística",
+    "Vitalidade Fantasma",
+    "Voz Divina"
+  ],
+  "campos_suspeitos_corrigidos": 3,
+  "correcoes_dados_aplicadas": [
+    {
+      "nome": "Aliado Animal",
+      "campo": "alcance",
+      "valor_anterior": "curto;",
+      "valor_corrigido": "curto",
+      "motivo": "Remoção de pontuação indevida no alcance."
+    },
+    {
+      "nome": "Área Escorregadia",
+      "campo": "alcance",
+      "valor_anterior": "curtoAlvo ou",
+      "valor_corrigido": "curto",
+      "motivo": "Remoção de rótulo concatenado ao alcance."
+    },
+    {
+      "nome": "Explosão Caleidoscópica",
+      "campo": "alcance",
+      "valor_anterior": "curto Área: esfera com 6m de raio",
+      "valor_corrigido": "curto",
+      "motivo": "A área já está registrada em alvo_area_efeito e foi removida do alcance."
+    }
+  ],
+  "campos_suspeitos_pendentes": [
+    {
+      "nome": "Arma de Jade",
+      "campo": "aprimoramentos",
+      "valor": "+2 PM (Apenas Devotos de Lin-W:",
+      "motivo": "Cabeçalho de aprimoramento contém parêntese sem fechamento.",
+      "url_referencia": "https://eduardomarques.pythonanywhere.com/241/"
+    }
+  ],
+  "ids_preservados": 90,
+  "total_ids_catalogo_antigo_preservados": 90,
+  "magias_novas_com_ids_atribuidos": [
+    {
+      "nome": "Acalmar Animal",
+      "id": 110
+    },
+    {
+      "nome": "Açoite Flamejante",
+      "id": 111
+    },
+    {
+      "nome": "Aliado Animal",
+      "id": 112
+    },
+    {
+      "nome": "Alterar Destino",
+      "id": 113
+    },
+    {
+      "nome": "Alterar Memória",
+      "id": 114
+    },
+    {
+      "nome": "Animar Objetos",
+      "id": 115
+    },
+    {
+      "nome": "Anular a Luz",
+      "id": 116
+    },
+    {
+      "nome": "Aprisionamento",
+      "id": 117
+    },
+    {
+      "nome": "Área Escorregadia",
+      "id": 118
+    },
+    {
+      "nome": "Arma de Jade",
+      "id": 119
+    },
+    {
+      "nome": "Armadura Elemental",
+      "id": 120
+    },
+    {
+      "nome": "Armadura Gélida",
+      "id": 121
+    },
+    {
+      "nome": "Armamento da Natureza",
+      "id": 122
+    },
+    {
+      "nome": "Arsenal de Allihanna",
+      "id": 123
+    },
+    {
+      "nome": "Assassino Fantasmagórico",
+      "id": 124
+    },
+    {
+      "nome": "Assobio Perigoso",
+      "id": 125
+    },
+    {
+      "nome": "Aura de Morte",
+      "id": 126
+    },
+    {
+      "nome": "Aura Restauradora",
+      "id": 127
+    },
+    {
+      "nome": "Barragem Elemental de Vectorius",
+      "id": 128
+    },
+    {
+      "nome": "Bênção da Dragoa Rainha",
+      "id": 129
+    },
+    {
+      "nome": "Bofetada de Nimb",
+      "id": 130
+    },
+    {
+      "nome": "Bola de Fogo",
+      "id": 131
+    },
+    {
+      "nome": "Buraco Negro",
+      "id": 132
+    },
+    {
+      "nome": "Campo Antimagia",
+      "id": 133
+    },
+    {
+      "nome": "Chuva",
+      "id": 134
+    },
+    {
+      "nome": "Chuva de Meteoros",
+      "id": 135
+    },
+    {
+      "nome": "Círculo da Restauração",
+      "id": 136
+    },
+    {
+      "nome": "Cólera de Azgher",
+      "id": 137
+    },
+    {
+      "nome": "Conceder Milagre",
+      "id": 138
+    },
+    {
+      "nome": "Condição",
+      "id": 139
+    },
+    {
+      "nome": "Conjurar Armadilha",
+      "id": 140
+    },
+    {
+      "nome": "Conjurar Elemental",
+      "id": 141
+    },
+    {
+      "nome": "Conjurar Mortos-Vivos",
+      "id": 142
+    },
+    {
+      "nome": "Controlar a Gravidade",
+      "id": 143
+    },
+    {
+      "nome": "Controlar Água",
+      "id": 144
+    },
+    {
+      "nome": "Controlar Ar",
+      "id": 145
+    },
+    {
+      "nome": "Controlar Madeira",
+      "id": 146
+    },
+    {
+      "nome": "Controlar o Clima",
+      "id": 147
+    },
+    {
+      "nome": "Controlar o Tempo",
+      "id": 148
+    },
+    {
+      "nome": "Controlar Terra",
+      "id": 149
+    },
+    {
+      "nome": "Convocação Instantânea",
+      "id": 150
+    },
+    {
+      "nome": "Coração Imortal",
+      "id": 151
+    },
+    {
+      "nome": "Couraça de Allihanna",
+      "id": 152
+    },
+    {
+      "nome": "Crânio Voador de Vladislav",
+      "id": 153
+    },
+    {
+      "nome": "Criar Ilusão",
+      "id": 154
+    },
+    {
+      "nome": "Cúpula de Repulsão",
+      "id": 155
+    },
+    {
+      "nome": "Dardo Gélido",
+      "id": 156
+    },
+    {
+      "nome": "Deflagração de Mana",
+      "id": 157
+    },
+    {
+      "nome": "Desafio Corajoso",
+      "id": 158
+    },
+    {
+      "nome": "Descobrir Fraqueza",
+      "id": 159
+    },
+    {
+      "nome": "Desejo",
+      "id": 160
+    },
+    {
+      "nome": "Desespero Esmagador",
+      "id": 161
+    },
+    {
+      "nome": "Desfazer Engenhoca",
+      "id": 162
+    },
+    {
+      "nome": "Despertar Consciência",
+      "id": 163
+    },
+    {
+      "nome": "Detonação Congelante",
+      "id": 164
+    },
+    {
+      "nome": "Dificultar Detecção",
+      "id": 165
+    },
+    {
+      "nome": "Discrição",
+      "id": 166
+    },
+    {
+      "nome": "Disparo Gélido",
+      "id": 167
+    },
+    {
+      "nome": "Dispersar as Trevas",
+      "id": 168
+    },
+    {
+      "nome": "Distração Fugaz",
+      "id": 169
+    },
+    {
+      "nome": "Duplicata Ilusória",
+      "id": 170
+    },
+    {
+      "nome": "Emular Magia",
+      "id": 171
+    },
+    {
+      "nome": "Engenho de Mana",
+      "id": 172
+    },
+    {
+      "nome": "Enxame Rubro de Ichabod",
+      "id": 173
+    },
+    {
+      "nome": "Escapatória de Hyninn",
+      "id": 174
+    },
+    {
+      "nome": "Esculpir Sons",
+      "id": 175
+    },
+    {
+      "nome": "Espírito Balístico",
+      "id": 176
+    },
+    {
+      "nome": "Euforia de Valkaria",
+      "id": 177
+    },
+    {
+      "nome": "Execução de Thwor",
+      "id": 178
+    },
+    {
+      "nome": "Explosão Caleidoscópica",
+      "id": 179
+    },
+    {
+      "nome": "Farejar Fortuna",
+      "id": 180
+    },
+    {
+      "nome": "Flecha de Luz",
+      "id": 181
+    },
+    {
+      "nome": "Frescor de Lena",
+      "id": 182
+    },
+    {
+      "nome": "Fúria do Panteão",
+      "id": 183
+    },
+    {
+      "nome": "Fúria dos Antepassados",
+      "id": 184
+    },
+    {
+      "nome": "Futuro Melhor",
+      "id": 185
+    },
+    {
+      "nome": "Geiser Cáustico",
+      "id": 186
+    },
+    {
+      "nome": "Globo da Verdade de Gwen",
+      "id": 187
+    },
+    {
+      "nome": "Guardião Divino",
+      "id": 188
+    },
+    {
+      "nome": "Hálito Peçonhento",
+      "id": 189
+    },
+    {
+      "nome": "Hipnotismo",
+      "id": 190
+    },
+    {
+      "nome": "Ilusão Lacerante",
+      "id": 191
+    },
+    {
+      "nome": "Impacto Fulminante",
+      "id": 192
+    },
+    {
+      "nome": "Infortúnio de Sszzaas",
+      "id": 193
+    },
+    {
+      "nome": "Instante Estoico",
+      "id": 194
+    },
+    {
+      "nome": "Intervenção Divina",
+      "id": 195
+    },
+    {
+      "nome": "Invocar Fagulha Elemental",
+      "id": 196
+    },
+    {
+      "nome": "Invulnerabilidade",
+      "id": 197
+    },
+    {
+      "nome": "Jato Corrosivo",
+      "id": 198
+    },
+    {
+      "nome": "Katana Celestial",
+      "id": 199
+    },
+    {
+      "nome": "Lágrimas de Wynna",
+      "id": 200
+    },
+    {
+      "nome": "Lança Ígnea de Aleph",
+      "id": 201
+    },
+    {
+      "nome": "Legião",
+      "id": 202
+    },
+    {
+      "nome": "Lendas & Histórias",
+      "id": 203
+    },
+    {
+      "nome": "Ligação Sombria",
+      "id": 204
+    },
+    {
+      "nome": "Ligação Telepática",
+      "id": 205
+    },
+    {
+      "nome": "Localização",
+      "id": 206
+    },
+    {
+      "nome": "Maaais Klunc",
+      "id": 207
+    },
+    {
+      "nome": "Magia Dadivosa",
+      "id": 208
+    },
+    {
+      "nome": "Manto do Cruzado",
+      "id": 209
+    },
+    {
+      "nome": "Mão Poderosa de Talude",
+      "id": 210
+    },
+    {
+      "nome": "Mapear",
+      "id": 211
+    },
+    {
+      "nome": "Máquina de Combate",
+      "id": 212
+    },
+    {
+      "nome": "Marca da Obediência",
+      "id": 213
+    },
+    {
+      "nome": "Marionete",
+      "id": 214
+    },
+    {
+      "nome": "Mata-Dragão",
+      "id": 215
+    },
+    {
+      "nome": "Miasma Mefítico",
+      "id": 216
+    },
+    {
+      "nome": "Momento de Tormenta",
+      "id": 217
+    },
+    {
+      "nome": "Muralha Elemental",
+      "id": 218
+    },
+    {
+      "nome": "Necrofogo",
+      "id": 219
+    },
+    {
+      "nome": "Nuvem Tempestuosa",
+      "id": 220
+    },
+    {
+      "nome": "Orbe do Oceano",
+      "id": 221
+    },
+    {
+      "nome": "Ossos de Adamante",
+      "id": 222
+    },
+    {
+      "nome": "Paixão de Marah",
+      "id": 223
+    },
+    {
+      "nome": "Palavra Primordial",
+      "id": 224
+    },
+    {
+      "nome": "Pântano Vitriólico",
+      "id": 225
+    },
+    {
+      "nome": "Percepção Rubra",
+      "id": 226
+    },
+    {
+      "nome": "Perdição",
+      "id": 227
+    },
+    {
+      "nome": "Perturbação Sombria",
+      "id": 228
+    },
+    {
+      "nome": "Piscar",
+      "id": 229
+    },
+    {
+      "nome": "Poção Explosiva",
+      "id": 230
+    },
+    {
+      "nome": "Poder de Kallyadranoch",
+      "id": 231
+    },
+    {
+      "nome": "Poeira da Podridão",
+      "id": 232
+    },
+    {
+      "nome": "Posse de Arsenal",
+      "id": 233
+    },
+    {
+      "nome": "Possessão",
+      "id": 234
+    },
+    {
+      "nome": "Potência Divina",
+      "id": 235
+    },
+    {
+      "nome": "Premonição",
+      "id": 236
+    },
+    {
+      "nome": "Preparação de Batalha",
+      "id": 237
+    },
+    {
+      "nome": "Projetar Consciência",
+      "id": 238
+    },
+    {
+      "nome": "Proteção Contra Magia",
+      "id": 239
+    },
+    {
+      "nome": "Proteção de Tauron",
+      "id": 240
+    },
+    {
+      "nome": "Punho de Mitral",
+      "id": 241
+    },
+    {
+      "nome": "Punição do Profano",
+      "id": 242
+    },
+    {
+      "nome": "Purificação",
+      "id": 243
+    },
+    {
+      "nome": "Raio de Plasma",
+      "id": 244
+    },
+    {
+      "nome": "Raio Solar",
+      "id": 245
+    },
+    {
+      "nome": "Reanimação Impura",
+      "id": 246
+    },
+    {
+      "nome": "Refúgio",
+      "id": 247
+    },
+    {
+      "nome": "Relâmpago Flamejante de Reynard",
+      "id": 248
+    },
+    {
+      "nome": "Réquiem",
+      "id": 249
+    },
+    {
+      "nome": "Roubar a Alma",
+      "id": 250
+    },
+    {
+      "nome": "Runa de Proteção",
+      "id": 251
+    },
+    {
+      "nome": "Santuário",
+      "id": 252
+    },
+    {
+      "nome": "Segunda Chance",
+      "id": 253
+    },
+    {
+      "nome": "Selo de Mana",
+      "id": 254
+    },
+    {
+      "nome": "Semiplano",
+      "id": 255
+    },
+    {
+      "nome": "Servo Divino",
+      "id": 256
+    },
+    {
+      "nome": "Servos Invisíveis",
+      "id": 257
+    },
+    {
+      "nome": "Seta Infalível de Talude",
+      "id": 258
+    },
+    {
+      "nome": "Sigilo de Sszzaas",
+      "id": 259
+    },
+    {
+      "nome": "Silêncio",
+      "id": 260
+    },
+    {
+      "nome": "Siroco de Azgher",
+      "id": 261
+    },
+    {
+      "nome": "Soco de Arsenal",
+      "id": 262
+    },
+    {
+      "nome": "Sombra Assassina",
+      "id": 263
+    },
+    {
+      "nome": "Sonho",
+      "id": 264
+    },
+    {
+      "nome": "Sopro da Salvação",
+      "id": 265
+    },
+    {
+      "nome": "Sorriso da Fortuna",
+      "id": 266
+    },
+    {
+      "nome": "Suporte Ambiental",
+      "id": 267
+    },
+    {
+      "nome": "Sussurros Insanos",
+      "id": 268
+    },
+    {
+      "nome": "Talho Invisível de Edauros",
+      "id": 269
+    },
+    {
+      "nome": "Teia",
+      "id": 270
+    },
+    {
+      "nome": "Tentáculos de Trevas",
+      "id": 271
+    },
+    {
+      "nome": "Terremoto",
+      "id": 272
+    },
+    {
+      "nome": "Toque Álgido",
+      "id": 273
+    },
+    {
+      "nome": "Toque Congelante",
+      "id": 274
+    },
+    {
+      "nome": "Toque da Morte",
+      "id": 275
+    },
+    {
+      "nome": "Toque de Megalokk",
+      "id": 276
+    },
+    {
+      "nome": "Toque do Horizonte",
+      "id": 277
+    },
+    {
+      "nome": "Toque Vampírico",
+      "id": 278
+    },
+    {
+      "nome": "Traição da Lâmina",
+      "id": 279
+    },
+    {
+      "nome": "Traição Mágica",
+      "id": 280
+    },
+    {
+      "nome": "Tranca Arcana",
+      "id": 281
+    },
+    {
+      "nome": "Tranquilidade",
+      "id": 282
+    },
+    {
+      "nome": "Transformação em Dragão",
+      "id": 283
+    },
+    {
+      "nome": "Transposição",
+      "id": 284
+    },
+    {
+      "nome": "Velocidade do Relâmpago",
+      "id": 285
+    },
+    {
+      "nome": "Ventania Mística",
+      "id": 286
+    },
+    {
+      "nome": "Vestimenta da Fé",
+      "id": 287
+    },
+    {
+      "nome": "Viagem Arbórea",
+      "id": 288
+    },
+    {
+      "nome": "Viagem Onírica",
+      "id": 289
+    },
+    {
+      "nome": "Viagem Planar",
+      "id": 290
+    },
+    {
+      "nome": "Vidência",
+      "id": 291
+    },
+    {
+      "nome": "Visão da Verdade",
+      "id": 292
+    },
+    {
+      "nome": "Voz da Razão",
+      "id": 293
+    },
+    {
+      "nome": "Voz Divina",
+      "id": 294
+    }
+  ],
+  "mapeamento_ids_catalogo_antigo": [
+    {
+      "id": 1,
+      "nome": "Abençoar Alimentos"
+    },
+    {
+      "id": 2,
+      "nome": "Adaga Mental"
+    },
+    {
+      "id": 3,
+      "nome": "Alarme"
+    },
+    {
+      "id": 4,
+      "nome": "Alterar Tamanho"
+    },
+    {
+      "id": 5,
+      "nome": "Amarras Etéreas"
+    },
+    {
+      "id": 6,
+      "nome": "Amedrontar"
+    },
+    {
+      "id": 7,
+      "nome": "Armadura Arcana"
+    },
+    {
+      "id": 8,
+      "nome": "Arma Espiritual"
+    },
+    {
+      "id": 9,
+      "nome": "Arma Mágica"
+    },
+    {
+      "id": 10,
+      "nome": "Aviso"
+    },
+    {
+      "id": 11,
+      "nome": "Bênção"
+    },
+    {
+      "id": 12,
+      "nome": "Caminhos da Natureza"
+    },
+    {
+      "id": 13,
+      "nome": "Camuflagem Ilusória"
+    },
+    {
+      "id": 14,
+      "nome": "Comando"
+    },
+    {
+      "id": 15,
+      "nome": "Compreensão"
+    },
+    {
+      "id": 16,
+      "nome": "Concentração de Combate"
+    },
+    {
+      "id": 17,
+      "nome": "Consagrar"
+    },
+    {
+      "id": 18,
+      "nome": "Criar Elementos"
+    },
+    {
+      "id": 19,
+      "nome": "Curar Ferimentos"
+    },
+    {
+      "id": 20,
+      "nome": "Despedaçar"
+    },
+    {
+      "id": 21,
+      "nome": "Detectar Ameaças"
+    },
+    {
+      "id": 22,
+      "nome": "Detectar Magia"
+    },
+    {
+      "id": 23,
+      "nome": "Disfarce Ilusório"
+    },
+    {
+      "id": 24,
+      "nome": "Enfeitiçar"
+    },
+    {
+      "id": 25,
+      "nome": "Escuridão"
+    },
+    {
+      "id": 26,
+      "nome": "Explosão de Chamas"
+    },
+    {
+      "id": 27,
+      "nome": "Faíscas"
+    },
+    {
+      "id": 28,
+      "nome": "Imagem Espelhada"
+    },
+    {
+      "id": 29,
+      "nome": "Infligir Ferimentos"
+    },
+    {
+      "id": 30,
+      "nome": "Leque Cromático"
+    },
+    {
+      "id": 31,
+      "nome": "Luz"
+    },
+    {
+      "id": 32,
+      "nome": "Névoa"
+    },
+    {
+      "id": 33,
+      "nome": "Orientação"
+    },
+    {
+      "id": 34,
+      "nome": "Primor Atlético"
+    },
+    {
+      "id": 35,
+      "nome": "Proteção Divina"
+    },
+    {
+      "id": 36,
+      "nome": "Queda Suave"
+    },
+    {
+      "id": 37,
+      "nome": "Raio do Enfraquecimento"
+    },
+    {
+      "id": 38,
+      "nome": "Resistência a Energia"
+    },
+    {
+      "id": 39,
+      "nome": "Sono"
+    },
+    {
+      "id": 40,
+      "nome": "Seta Infalível"
+    },
+    {
+      "id": 41,
+      "nome": "Toque Chocante"
+    },
+    {
+      "id": 42,
+      "nome": "Transmutar Objetos"
+    },
+    {
+      "id": 43,
+      "nome": "Visão Mística"
+    },
+    {
+      "id": 44,
+      "nome": "Vitalidade Fantasma"
+    },
+    {
+      "id": 45,
+      "nome": "Âncora Dimensional"
+    },
+    {
+      "id": 46,
+      "nome": "Aparência Perfeita"
+    },
+    {
+      "id": 47,
+      "nome": "Augúrio"
+    },
+    {
+      "id": 48,
+      "nome": "Aura Divina"
+    },
+    {
+      "id": 49,
+      "nome": "Aterrorizar"
+    },
+    {
+      "id": 50,
+      "nome": "Banimento"
+    },
+    {
+      "id": 51,
+      "nome": "Barreira de Energia"
+    },
+    {
+      "id": 52,
+      "nome": "Campo de Força"
+    },
+    {
+      "id": 53,
+      "nome": "Círculo da Justiça"
+    },
+    {
+      "id": 54,
+      "nome": "Coluna de Chamas"
+    },
+    {
+      "id": 55,
+      "nome": "Comunhão com a Natureza"
+    },
+    {
+      "id": 56,
+      "nome": "Cone de Frio"
+    },
+    {
+      "id": 57,
+      "nome": "Conhecimento Divino"
+    },
+    {
+      "id": 58,
+      "nome": "Conjurar Monstro"
+    },
+    {
+      "id": 59,
+      "nome": "Contato Extraplanar"
+    },
+    {
+      "id": 60,
+      "nome": "Controlar Fogo"
+    },
+    {
+      "id": 61,
+      "nome": "Controlar Plantas"
+    },
+    {
+      "id": 62,
+      "nome": "Convocar Relâmpagos"
+    },
+    {
+      "id": 63,
+      "nome": "Curar Ferimentos em Massa"
+    },
+    {
+      "id": 64,
+      "nome": "Desintegrar"
+    },
+    {
+      "id": 65,
+      "nome": "Dissipar Magia"
+    },
+    {
+      "id": 66,
+      "nome": "Domínio Animal"
+    },
+    {
+      "id": 67,
+      "nome": "Enxame de Pestes"
+    },
+    {
+      "id": 68,
+      "nome": "Erupção Glacial"
+    },
+    {
+      "id": 69,
+      "nome": "Escudo da Fé"
+    },
+    {
+      "id": 70,
+      "nome": "Espada Justiceira"
+    },
+    {
+      "id": 71,
+      "nome": "Falar com Animais"
+    },
+    {
+      "id": 72,
+      "nome": "Ferver Sangue"
+    },
+    {
+      "id": 73,
+      "nome": "Físico Divino"
+    },
+    {
+      "id": 74,
+      "nome": "Flecha Ácida"
+    },
+    {
+      "id": 75,
+      "nome": "Forma Etérea"
+    },
+    {
+      "id": 76,
+      "nome": "Forma Gasosa"
+    },
+    {
+      "id": 77,
+      "nome": "Globo de Invulnerabilidade"
+    },
+    {
+      "id": 78,
+      "nome": "Heroísmo"
+    },
+    {
+      "id": 79,
+      "nome": "Imobilizar"
+    },
+    {
+      "id": 80,
+      "nome": "Invisibilidade"
+    },
+    {
+      "id": 81,
+      "nome": "Lendas e Histórias"
+    },
+    {
+      "id": 82,
+      "nome": "Libertação"
+    },
+    {
+      "id": 83,
+      "nome": "Manto de Sombras"
+    },
+    {
+      "id": 84,
+      "nome": "Mente Divina"
+    },
+    {
+      "id": 85,
+      "nome": "Metamorfose"
+    },
+    {
+      "id": 86,
+      "nome": "Miragem"
+    },
+    {
+      "id": 87,
+      "nome": "Missão Divina"
+    },
+    {
+      "id": 88,
+      "nome": "Montaria Arcana"
+    },
+    {
+      "id": 89,
+      "nome": "Muralha de Ossos"
+    },
+    {
+      "id": 90,
+      "nome": "Muralha de Pedra"
+    },
+    {
+      "id": 91,
+      "nome": "Oração"
+    },
+    {
+      "id": 92,
+      "nome": "Pele de Pedra"
+    },
+    {
+      "id": 93,
+      "nome": "Porta Dimensional"
+    },
+    {
+      "id": 94,
+      "nome": "Profanar"
+    },
+    {
+      "id": 95,
+      "nome": "Raio Polar"
+    },
+    {
+      "id": 96,
+      "nome": "Relâmpago"
+    },
+    {
+      "id": 97,
+      "nome": "Restauração"
+    },
+    {
+      "id": 98,
+      "nome": "Ressurreição"
+    },
+    {
+      "id": 99,
+      "nome": "Rogar Maldição"
+    },
+    {
+      "id": 100,
+      "nome": "Salto Dimensional"
+    },
+    {
+      "id": 101,
+      "nome": "Servo Morto-Vivo"
+    },
+    {
+      "id": 102,
+      "nome": "Sopro das Uivantes"
+    },
+    {
+      "id": 103,
+      "nome": "Telecinesia"
+    },
+    {
+      "id": 104,
+      "nome": "Telepatia"
+    },
+    {
+      "id": 105,
+      "nome": "Teletransporte"
+    },
+    {
+      "id": 106,
+      "nome": "Tempestade Divina"
+    },
+    {
+      "id": 107,
+      "nome": "Transformação de Guerra"
+    },
+    {
+      "id": 108,
+      "nome": "Velocidade"
+    },
+    {
+      "id": 109,
+      "nome": "Voo"
+    }
+  ],
+  "validacoes": {
+    "ids_unicos": true,
+    "nomes_unicos": true,
+    "site_ids_unicos": true,
+    "sem_confirmDelete": true,
+    "sem_delete_spell": true,
+    "sem_window_location_href": true,
+    "ids_antigos_preservados": true,
+    "vinculos_catalog_id_preservados": true,
+    "magias_antigas_ausentes": true,
+    "ids_removidos_nao_reutilizados": true,
+    "novas_magias_com_ids_novos": true,
+    "json_valido": true
+  },
+  "fonte_bruta_sha256": "0a8b2880b6a5c2fede8379e5521284c5c89b32cff5245e3db37ea64f8f256e4e",
+  "catalogo_final_sha256": "5dd7ecbc5b51e746fcffef267b3268e740efe960a2871b7bfe338fee611aa8a8"
+}
